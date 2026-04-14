@@ -101,7 +101,36 @@ model User {
   marketSellOrders    MarketOrder[]   @relation("MarketSeller")
   marketReviewsGiven  MarketReview[]  @relation("ReviewAuthor")
   marketReviewsReceived MarketReview[] @relation("ReviewTarget")
+  // Market Reports
   marketReports       MarketReport[]  @relation("ReportAuthor")
+
+  // Authentication & Sessions (Lucia Auth)
+  sessions            Session[]
+}
+
+// ─── Authentication & Sessions (Lucia Auth) ────────────────────────────────────
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model OtpVerification {
+  id          String   @id @default(uuid())
+  phoneNumber String
+  email       String?
+  code        String
+  expiresAt   DateTime
+  isVerified  Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+
+  @@index([phoneNumber, code]) // Fast lookups during verification
 }
 
 // ─── Follow / Block ───────────────────────────────────────────────────────────

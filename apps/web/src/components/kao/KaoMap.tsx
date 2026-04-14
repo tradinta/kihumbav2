@@ -2,7 +2,6 @@
 
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import {

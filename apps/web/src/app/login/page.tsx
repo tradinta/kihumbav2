@@ -1,182 +1,121 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
+import { ArrowLeft, Mail, Lock, Smartphone, ChevronRight } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
-  };
-
   return (
-    <div className="min-h-screen bg-page flex">
-      {/* Left Panel — Branding (desktop) */}
-      <div className="hidden lg:flex lg:w-[45%] xl:w-[50%] relative overflow-hidden items-center justify-center">
-        {/* Background image layer */}
-        <div className="absolute inset-0">
-          <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtybnJkTWyDCI2riQjGAzSdkmoZlzfkuZE29TFvMwQiFsqXC2oOWNZPMwfOo5n_fpDccgNPiyAxqdPOHH1rzViklqvdAs03Rfd4Ng9YbstNwBw0DBxgFEzHjDeACAMz4ga0nXckhZCayFTNCzQePdENatj_aZfNOIqacLS0sQS-uNxqliYE3NET2ay18WkjX2luD2trZVZYAhmaA7-tFXCgD_tytEbhmkm1DpFE5n4EMatPi8bK-DeQIiUVYZjcRd8U95CGi8Q_XPw"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/90" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
-        </div>
-
-        {/* Brand content */}
-        <div className="relative z-10 px-12 xl:px-20 max-w-lg">
-          <h1 className="text-4xl xl:text-5xl font-bold tracking-[0.3em] uppercase text-primary-gold gold-glow mb-6">
-            Kihumba
-          </h1>
-          <div className="w-16 h-0.5 bg-gradient-to-r from-primary-gold to-transparent mb-6" />
-          <p className="text-lg text-white/80 font-light leading-relaxed mb-3">
-            Where culture meets community.
-          </p>
-          <p className="text-sm text-white/50 font-light leading-relaxed">
-            Connect with creators, share your story, and be part of something bigger than yourself.
-          </p>
-
-          {/* Stats */}
-          <div className="flex gap-8 mt-10">
-            <div>
-              <p className="text-2xl font-bold text-primary-gold">50K+</p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">Creators</p>
+    <div className="flex min-h-screen bg-[var(--bg-color)]">
+      
+      {/* Visual Accent Side (Hidden on Mobile) */}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-black flex-col justify-end p-12">
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+        <img 
+          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564" 
+          alt="Abstract Liquid Glass"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
+        />
+        
+        <div className="relative z-20 max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="size-16 rounded-2xl bg-gradient-to-br from-primary-gold via-primary-gold/80 to-yellow-600 mb-6 flex items-center justify-center p-1 shadow-2xl shadow-primary-gold/20">
+              <span className="text-3xl font-black text-black tracking-tighter">K.</span>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-primary-gold">1.2M</p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">Posts</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-primary-gold">47</p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mt-1">Counties</p>
-            </div>
-          </div>
+            <h2 className="text-4xl font-black text-white tracking-tight mb-4">
+              Enter the hub for African Creators.
+            </h2>
+            <p className="text-sm font-bold text-gray-400">
+              Connect with your audience, monetize your content, and scale your brand on the continent's most premium platform.
+            </p>
+          </motion.div>
         </div>
       </div>
 
-      {/* Right Panel — Form */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 sm:px-12 lg:px-16 xl:px-24 py-12 relative">
-        {/* Mobile background glow */}
-        <div className="lg:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full bg-primary-gold/8 blur-[120px] pointer-events-none" />
-
-        {/* Mobile brand */}
-        <div className="lg:hidden mb-12 text-center">
-          <h1 className="text-3xl font-bold tracking-[0.4em] uppercase text-primary-gold gold-glow mb-2">
-            Kihumba
-          </h1>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-custom font-medium">
-            Where culture meets community
-          </p>
-        </div>
-
-        <div className="w-full max-w-md relative z-10">
-          {/* Heading */}
-          <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">Sign in</h2>
-            <p className="text-sm text-muted-custom">Enter your credentials to continue</p>
+      {/* Auth Form Side */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 xl:px-32 relative">
+        <Link 
+          href="/" 
+          className="absolute top-10 left-8 sm:left-16 xl:left-32 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-custom hover:text-main transition-colors group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Feed
+        </Link>
+        
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md mx-auto"
+        >
+          <div className="mb-10 text-center lg:text-left">
+            <h1 className="text-3xl font-black tracking-tight text-main mb-2">Welcome back</h1>
+            <p className="text-[12px] font-bold text-muted-custom">Please enter your details to sign in.</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-muted-custom mb-2.5">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@email.com"
-                required
-                className="w-full bg-transparent pill-surface border border-custom rounded-xl px-5 py-4 text-[15px] text-[var(--text-main)] placeholder:text-muted-custom/40 focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold/30 transition-all"
-              />
-            </div>
+          {/* Social Logins */}
+          <div className="flex gap-4 mb-8">
+            <button className="flex-1 py-3 rounded-xl border border-custom bg-[var(--pill-bg)] hover:bg-white/5 transition-colors flex items-center justify-center gap-2 hover:border-custom-hover">
+              <svg className="size-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <span className="text-[11px] font-bold">Google</span>
+            </button>
+            <button className="flex-1 py-3 rounded-xl border border-custom bg-[var(--pill-bg)] hover:bg-white/5 transition-colors flex items-center justify-center gap-2 hover:border-custom-hover">
+              <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.82 3.59-.72 1.48.06 2.65.65 3.34 1.77-3.05 1.87-2.48 5.76.62 6.94-1.03 2.5-2.07 4.1-2.63 4.18zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span className="text-[11px] font-bold">Apple</span>
+            </button>
+          </div>
 
-            {/* Password */}
-            <div>
-              <div className="flex items-center justify-between mb-2.5">
-                <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-muted-custom">
-                  Password
-                </label>
-                <button type="button" className="text-[10px] font-bold text-primary-gold uppercase tracking-wider hover:underline">
-                  Forgot?
-                </button>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  minLength={6}
-                  className="w-full bg-transparent pill-surface border border-custom rounded-xl px-5 py-4 pr-12 text-[15px] text-[var(--text-main)] placeholder:text-muted-custom/40 focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold/30 transition-all"
+          <div className="relative flex items-center py-4 mb-4">
+            <div className="flex-grow border-t border-custom"></div>
+            <span className="flex-shrink-0 mx-4 text-[9px] font-bold uppercase tracking-widest text-muted-custom">Or continue with</span>
+            <div className="flex-grow border-t border-custom"></div>
+          </div>
+
+          {/* Form */}
+          <form className="space-y-4">
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-muted-custom uppercase tracking-widest pl-1">Email or Phone</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-custom group-focus-within:text-primary-gold transition-colors">
+                  <Smartphone size={16} />
+                </div>
+                <input 
+                  type="text" 
+                  className="w-full bg-[var(--pill-bg)] border border-custom rounded-xl py-3.5 pl-11 pr-4 text-[13px] font-bold text-main focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition-all"
+                  placeholder="name@example.com or +254..."
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-custom hover:text-primary-gold transition-colors p-1"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
               </div>
             </div>
 
-            {/* Error */}
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3">
-                <p className="text-[12px] text-red-400 font-medium">{error}</p>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center pl-1 pr-1">
+                <label className="text-[11px] font-bold text-muted-custom uppercase tracking-widest">Password</label>
+                <Link href="#" className="text-[10px] font-bold text-primary-gold hover:underline">Forgot?</Link>
               </div>
-            )}
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-custom group-focus-within:text-primary-gold transition-colors">
+                  <Lock size={16} />
+                </div>
+                <input 
+                  type="password" 
+                  className="w-full bg-[var(--pill-bg)] border border-custom rounded-xl py-3.5 pl-11 pr-4 text-[13px] font-bold text-main focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary-gold text-black py-4 rounded-xl text-[13px] font-bold uppercase tracking-[0.25em] hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-xl shadow-primary-gold/20 mt-2"
-            >
-              {loading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <>
-                  Sign In
-                  <ArrowRight size={16} />
-                </>
-              )}
+            <button type="button" className="w-full bg-main text-[var(--bg-color)] rounded-xl py-3.5 mt-4 text-[12px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+              Sign In <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px bg-[var(--border-color)]" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-custom">New here?</span>
-            <div className="flex-1 h-px bg-[var(--border-color)]" />
-          </div>
-
-          {/* Create account */}
-          <Link
-            href="/signup"
-            className="block w-full py-4 rounded-xl border-2 border-primary-gold/20 text-[13px] font-bold uppercase tracking-[0.2em] text-primary-gold hover:bg-primary-gold/5 hover:border-primary-gold/40 transition-all active:scale-[0.98] text-center"
-          >
-            Create an Account
-          </Link>
-        </div>
-
-        {/* Bottom footer */}
-        <p className="mt-12 text-[9px] text-muted-custom uppercase tracking-widest font-bold">
-          Kihumba © 2026 — Made in Kenya 🇰🇪
-        </p>
+          <p className="mt-8 text-center text-[11px] font-bold text-muted-custom">
+            Don't have an account? <Link href="/signup" className="text-primary-gold hover:underline ml-1">Create one</Link>
+          </p>
+        </motion.div>
       </div>
     </div>
   );

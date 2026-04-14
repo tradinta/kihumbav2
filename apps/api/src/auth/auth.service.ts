@@ -1,16 +1,15 @@
 import {
     Injectable, UnauthorizedException, ConflictException, BadRequestException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto, LoginDto, OnboardingDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
+import { lucia } from './lucia.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private prisma: PrismaService,
-        private jwtService: JwtService,
     ) { }
 
     // ─── Signup ────────────────────────────────────────────────────────────────
@@ -30,10 +29,11 @@ export class AuthService {
             },
         });
 
-        const token = this.signToken(user.id, user.email, user.username);
+        const session = await lucia.createSession(user.id, {});
+        const sessionCookie = lucia.createSessionCookie(session.id);
 
         return {
-            access_token: token,
+            sessionCookie,
             user: this.sanitizeUser(user),
         };
     }
@@ -55,11 +55,20 @@ export class AuthService {
             data: { lastActiveAt: new Date() },
         });
 
-        const token = this.signToken(user.id, user.email, user.username);
+        const session = await lucia.createSession(user.id, {});
+        const sessionCookie = lucia.createSessionCookie(session.id);
+
         return {
-            access_token: token,
+            sessionCookie,
             user: this.sanitizeUser(user),
         };
+    }
+
+    // ─── Logout ────────────────────────────────────────────────────────────────
+
+    async logout(sessionId: string) {
+        await lucia.invalidateSession(sessionId);
+        return lucia.createBlankSessionCookie();
     }
 
     // ─── Onboarding ────────────────────────────────────────────────────────────
@@ -112,14 +121,6 @@ export class AuthService {
     }
 
     // ─── Helpers ───────────────────────────────────────────────────────────────
-
-    private signToken(id: string, email: string | null, username: string | null) {
-        return this.jwtService.sign({
-            sub: id,
-            email,
-            username,
-        });
-    }
 
     private sanitizeUser(user: any) {
         const { passwordHash, ...safe } = user;
