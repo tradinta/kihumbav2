@@ -16,7 +16,7 @@ export interface CommentData {
   replies?: number;
 }
 
-export const mockPost: PostData = {
+export const mockPost: any = {
   id: "1",
   type: "user",
   author: {

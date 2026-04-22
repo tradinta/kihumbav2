@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { 
   LayoutDashboard, 
   Video, 
@@ -10,16 +8,20 @@ import {
   Wallet,
   ArrowLeft
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function StudioSidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const currentTab = searchParams.get('tab') || 'dashboard';
 
   const navItems = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/studio", exact: true },
-    { name: "Content", icon: Video, href: "/studio/content", exact: false },
-    { name: "Campaigns", icon: Megaphone, href: "/studio/campaigns", exact: false },
-    { name: "Analytics", icon: BarChart3, href: "/studio/analytics", exact: false },
-    { name: "Earn", icon: Wallet, href: "/studio/earn", exact: false },
+    { name: "Dashboard", icon: LayoutDashboard, tab: "overview", href: "/studio?tab=overview" },
+    { name: "Content", icon: Video, tab: "content", href: "/studio?tab=content" },
+    { name: "Campaigns", icon: Megaphone, tab: "campaigns", href: "/studio?tab=campaigns" },
+    { name: "Analytics", icon: BarChart3, tab: "analytics", href: "/studio?tab=analytics" },
+    { name: "Revenue", icon: Wallet, tab: "revenue", href: "/studio?tab=revenue" },
   ];
 
   return (
@@ -41,21 +43,21 @@ export default function StudioSidebar() {
 
        {/* Author Info */}
        <div className="px-6 mb-8 flex flex-col items-center text-center">
-         <img 
-           src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400" 
-           alt="Your Profile" 
-           className="size-20 rounded-full object-cover mb-3 border-2 border-custom"
-         />
-         <h2 className="text-[11px] font-bold">Kamau Njoroge</h2>
-         <p className="text-[10px] text-muted-custom">@kamau_n</p>
+         <div className="size-20 rounded-full border-2 border-custom overflow-hidden mb-3 bg-white/5">
+            <img 
+              src={user?.image || user?.avatar || "https://images.unsplash.com/photo-1542361345-89e58247f2d5?q=80&w=400"} 
+              alt={user?.name || "User"} 
+              className="size-full object-cover"
+            />
+         </div>
+         <h2 className="text-[11px] font-bold text-main">{user?.name || user?.fullName || "Kihumba Creator"}</h2>
+         <p className="text-[10px] text-muted-custom">@{user?.username || "creator"}</p>
        </div>
 
        {/* Navigation */}
        <nav className="flex-1 px-4 space-y-1">
          {navItems.map((item) => {
-           const isActive = item.exact 
-             ? pathname === item.href 
-             : pathname.startsWith(item.href);
+           const isActive = currentTab === item.tab;
 
            return (
              <Link 

@@ -17,6 +17,10 @@
     },
     "db:push": {
       "cache": false
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "cache": true
     }
   }
 }

@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FileText, ShoppingBag, Store, User } from 'lucide-react';
+import { FileText, ShoppingBag, Store, Award } from 'lucide-react';
 
-export type ProfileTab = 'posts' | 'marketplace' | 'kao' | 'about';
+export type ProfileTab = 'posts' | 'marketplace' | 'kao' | 'badges';
 
 interface Props {
   active: ProfileTab;
@@ -15,7 +15,7 @@ const TABS: { id: ProfileTab; label: string; icon: React.ElementType }[] = [
   { id: 'posts', label: 'Posts', icon: FileText },
   { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag },
   { id: 'kao', label: 'Kao', icon: Store },
-  { id: 'about', label: 'About', icon: User },
+  { id: 'badges', label: 'Badges', icon: Award },
 ];
 
 export default function ProfileTabs({ active, onChange }: Props) {

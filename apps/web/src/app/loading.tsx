@@ -3,7 +3,7 @@ import LeftSidebar from "@/components/LeftSidebar";
 import SkeletonRightSidebar from "@/components/skeletons/SkeletonRightSidebar";
 import BottomNav from "@/components/BottomNav";
 import TopBar from "@/components/TopBar";
-import SkeletonStoriesBar from "@/components/skeletons/SkeletonStoriesBar";
+import SkeletonStoriesBar from "@/components/skeletons/SkeletonFiresBar";
 import SkeletonCard from "@/components/feed/SkeletonCard";
 
 export default function Loading() {

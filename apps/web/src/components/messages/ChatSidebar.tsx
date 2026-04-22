@@ -2,19 +2,29 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   Search, Plus, Users, MessageCircle, Ghost, Settings,
-  ShieldCheck, User as UserIcon, Fingerprint
+  ShieldCheck, User as UserIcon, Fingerprint, X, Loader2,
+  ChevronRight, MoreVertical, Send, UserPlus, Archive, Trash2
 } from 'lucide-react';
+import UserIdentity from '../shared/UserIdentity';
+import StartChatModal from './StartChatModal';
+import ConfirmModal from '../shared/ConfirmModal';
+import { useAuth } from '@/context/AuthContext';
+import { useSnackbar } from '@/context/SnackbarContext';
+import { api } from '@/lib/api';
 import type { Chat, Story } from '@/data/chatData';
+import { UI_LABELS } from '@/lib/constants';
 
 interface ChatSidebarProps {
   stories: Story[];
   chats: Chat[];
   activeFilter: string;
   setActiveFilter: (filter: string) => void;
-  activeChatId: number | null;
-  setActiveChatId: (id: number) => void;
+  activeChatId: string | number | null;
+  setActiveChatId: (id: string | number) => void;
+  onRefresh?: () => void;
 }
 
 const VerifiedDot = () => (
@@ -24,18 +34,55 @@ const VerifiedDot = () => (
 );
 
 const FILTERS = [
-  { id: 'all', label: 'All', icon: MessageCircle },
-  { id: 'dms', label: 'DMs', icon: UserIcon },
-  { id: 'groups', label: 'Groups', icon: Users },
-  { id: 'anon', label: 'Anon', icon: Ghost },
+  { id: 'all', label: UI_LABELS.FILTERS.ALL, icon: MessageCircle },
+  { id: 'dms', label: UI_LABELS.FILTERS.DMS, icon: UserIcon },
+  { id: 'groups', label: UI_LABELS.FILTERS.GROUPS, icon: Users },
+  { id: 'anon', label: UI_LABELS.FILTERS.ANON, icon: Ghost },
+  { id: 'archived', label: UI_LABELS.FILTERS.ARCHIVED, icon: Archive },
 ];
 
 export default function ChatSidebar({
   stories, chats, activeFilter, setActiveFilter,
-  activeChatId, setActiveChatId,
+  activeChatId, setActiveChatId, onRefresh
 }: ChatSidebarProps) {
+  const { user } = useAuth();
+  const { showSnackbar } = useSnackbar();
+  const [isNewChatOpen, setIsNewChatOpen] = React.useState(false);
+  const [deleteModal, setDeleteModal] = React.useState<{isOpen: boolean, roomId: string | null}>({ isOpen: false, roomId: null });
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  const handleDeleteRoom = async () => {
+    if (!deleteModal.roomId) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/chat/rooms/${deleteModal.roomId}`);
+      showSnackbar('Conversation decommissioned', 'info');
+      onRefresh?.();
+      setDeleteModal({ isOpen: false, roomId: null });
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || 'Failed to decommission channel';
+      showSnackbar(msg, 'error');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleArchiveRoom = async (e: React.MouseEvent, roomId: string, isCurrentlyArchived: boolean) => {
+    e.stopPropagation();
+    try {
+      await api.post(`/chat/rooms/${roomId}/archive`, { archive: !isCurrentlyArchived });
+      showSnackbar(isCurrentlyArchived ? 'Conversation unarchived' : 'Conversation archived', 'success');
+      onRefresh?.();
+    } catch (err) {
+      showSnackbar('Failed to update archive status', 'error');
+    }
+  };
 
   const filteredChats = chats.filter(chat => {
+    const isArchived = (chat as any).isArchived;
+    if (activeFilter === 'archived') return isArchived;
+    if (isArchived) return false; // Hide archived chats from other filters
+    
     if (activeFilter === 'all') return true;
     if (activeFilter === 'dms') return chat.type === 'dm';
     if (activeFilter === 'groups') return chat.type === 'group';
@@ -44,45 +91,30 @@ export default function ChatSidebar({
   });
 
   return (
-    <div className="w-full md:w-72 lg:w-80 h-full flex flex-col gap-3 card-surface rounded-lg p-3 shrink-0 overflow-hidden select-none">
+    <div className="w-full md:w-72 lg:w-80 h-full flex flex-col gap-3 p-3 shrink-0 overflow-hidden select-none bg-transparent">
       {/* Header */}
       <div className="flex items-center justify-between px-1">
-        <h1 className="text-sm font-bold tracking-[0.15em] uppercase text-primary-gold gold-glow">Messages</h1>
+        <h1 className="text-sm font-bold tracking-[0.15em] uppercase text-primary-gold gold-glow">{UI_LABELS.MESSAGES}</h1>
         <div className="flex gap-1">
-          <button className="size-7 card-surface rounded flex items-center justify-center text-muted-custom hover:text-primary-gold transition-colors">
+          <Link 
+            href="/messages/settings"
+            className="size-7 pill-surface rounded-[var(--radius-main)] flex items-center justify-center text-muted-custom hover:text-primary-gold transition-colors border border-custom"
+          >
             <Settings size={13} />
-          </button>
-          <button className="size-7 bg-primary-gold rounded flex items-center justify-center text-black hover:brightness-110 transition-all">
+          </Link>
+          <button 
+            onClick={() => setIsNewChatOpen(true)}
+            className="size-7 bg-primary-gold rounded-[var(--radius-main)] flex items-center justify-center text-black hover:brightness-110 transition-all"
+          >
             <Plus size={14} />
           </button>
         </div>
       </div>
 
       {/* Search */}
-      <div className="card-surface rounded px-2.5 py-1.5 flex items-center gap-2">
+      <div className="pill-surface rounded-[var(--radius-main)] px-2.5 py-2 flex items-center gap-2 border border-custom">
         <Search size={12} className="text-primary-gold/50" />
-        <input type="text" placeholder="Search messages…" className="flex-1 bg-transparent outline-none text-[10px] font-bold placeholder:text-muted-custom/50" />
-      </div>
-
-      {/* Stories */}
-      <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
-        {stories.map(story => (
-          <div key={story.id} className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group">
-            {story.type === 'add' ? (
-              <div className="size-11 rounded-full border-2 border-dashed border-custom flex items-center justify-center bg-[var(--pill-bg)] hover:border-primary-gold/40 transition-all">
-                <Plus size={14} className="text-muted-custom group-hover:text-primary-gold transition-colors" />
-              </div>
-            ) : (
-              <div className={`size-11 rounded-full p-[2px] ${story.viewed ? 'bg-[var(--pill-bg)]' : 'bg-primary-gold'}`}>
-                <div className="rounded-full h-full w-full p-[1px] relative" style={{ background: 'var(--bg-color)' }}>
-                  <img src={story.avatar || ''} className="rounded-full w-full h-full object-cover" alt="" />
-                  {story.isPremium && <div className="absolute -bottom-0.5 -right-0.5"><VerifiedDot /></div>}
-                </div>
-              </div>
-            )}
-            <span className="text-[8px] font-bold uppercase tracking-widest text-muted-custom">{story.type === 'add' ? 'Add' : story.name}</span>
-          </div>
-        ))}
+        <input type="text" placeholder={UI_LABELS.SEARCH_MESSAGES} className="flex-1 bg-transparent outline-none text-[10px] font-bold text-main placeholder:text-muted-custom/50" />
       </div>
 
       {/* Filters */}
@@ -91,10 +123,10 @@ export default function ChatSidebar({
           <button
             key={f.id}
             onClick={() => setActiveFilter(f.id)}
-            className={`px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 transition-all border ${
+            className={`px-2.5 py-1.5 rounded-[var(--radius-main)] text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 transition-all border shrink-0 ${
               activeFilter === f.id
                 ? 'bg-primary-gold/15 text-primary-gold border-primary-gold/30'
-                : 'card-surface text-muted-custom border-custom'
+                : 'pill-surface text-muted-custom border-custom'
             }`}
           >
             <f.icon size={10} />
@@ -114,43 +146,83 @@ export default function ChatSidebar({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={() => setActiveChatId(chat.id)}
-              className={`p-2.5 rounded-lg cursor-pointer flex items-center gap-2.5 transition-all border ${
+              className={`p-2.5 rounded-lg cursor-pointer flex items-center gap-2.5 transition-all border group relative ${
                 activeChatId === chat.id
                   ? 'card-surface border-primary-gold/20'
                   : 'bg-transparent border-transparent hover:bg-[var(--card-bg)]'
               }`}
             >
-              <div className="relative shrink-0">
-                {chat.isAnon ? (
-                  <div className="size-9 rounded-full bg-[var(--pill-bg)] border border-custom flex items-center justify-center text-primary-gold">
-                    <Ghost size={14} />
-                  </div>
-                ) : (
-                  <img src={chat.avatar || ''} className="size-9 rounded-full object-cover border border-custom" alt="" />
-                )}
-                {chat.isPremium && !chat.isAnon && <div className="absolute -bottom-0.5 -right-0.5"><VerifiedDot /></div>}
+              <div className="flex-1 min-w-0 flex flex-col">
+                <UserIdentity 
+                  user={{
+                    ...chat,
+                    id: chat.id?.toString(),
+                    username: chat.name,
+                    fullName: chat.name,
+                    avatar: chat.avatar,
+                    subscriptionTier: (chat as any).subscriptionTier || (chat.isPremium ? 'PLUS' : 'FREE'),
+                    accountType: chat.isAnon ? 'NORMAL' : 'NORMAL'
+                  } as any}
+                  size="sm"
+                  hideHandle
+                  isLink={false}
+                  className="flex-none"
+                />
+                <p className={`text-[9px] truncate font-bold mt-0.5 ml-11 ${chat.unread > 0 ? 'text-primary-gold' : 'text-muted-custom'}`}>
+                  {chat.lastMsg}
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-[8px] text-muted-custom font-bold shrink-0">{chat.time}</span>
+                
+                {/* Action Buttons (Visible on Hover) */}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                  <button 
+                    onClick={(e) => handleArchiveRoom(e, chat.id, (chat as any).isArchived)}
+                    className="size-6 rounded-full hover:bg-primary-gold/10 text-muted-custom hover:text-primary-gold flex items-center justify-center transition-all"
+                    title={(chat as any).isArchived ? "Unarchive" : "Archive"}
+                  >
+                    <Archive size={12} />
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setDeleteModal({ isOpen: true, roomId: chat.id }); }}
+                    className="size-6 rounded-full hover:bg-red-500/10 text-muted-custom hover:text-red-500 flex items-center justify-center transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+
                 {chat.unread > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-gold text-black text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
+                  <span className="bg-primary-gold text-black text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
                     {chat.unread}
                   </span>
                 )}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-baseline">
-                  <h4 className={`font-bold truncate text-[10px] uppercase tracking-widest ${chat.isAnon ? 'italic text-primary-gold' : ''}`}>
-                    {chat.name}
-                  </h4>
-                  <span className="text-[8px] text-muted-custom font-bold shrink-0 ml-1">{chat.time}</span>
-                </div>
-                <p className={`text-[9px] truncate font-bold mt-0.5 ${chat.unread > 0 ? 'text-primary-gold' : 'text-muted-custom'}`}>
-                  {chat.lastMsg}
-                </p>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, roomId: null })}
+        onConfirm={handleDeleteRoom}
+        loading={isDeleting}
+        title="Delete Full History"
+        description="This will delete the full chat history and cannot be undone."
+        confirmText="Delete for Me"
+      />
+
+      <StartChatModal 
+        isOpen={isNewChatOpen}
+        onClose={() => setIsNewChatOpen(false)}
+        onRoomCreated={(roomId) => {
+          setActiveChatId(roomId);
+          setIsNewChatOpen(false);
+          onRefresh?.();
+        }}
+      />
     </div>
   );
 }

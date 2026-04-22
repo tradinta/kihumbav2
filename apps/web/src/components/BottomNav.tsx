@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { Building2, Store, Crown, Menu, Plus } from "lucide-react";
+import { usePostContext } from "@/context/PostContext";
 
 const navItems = [
-  { id: "home", icon: Building2, label: "Home" },
-  { id: "kao", icon: Store, label: "Kao" },
-  { id: "growth", icon: Crown, label: "Growth" },
-  { id: "more", icon: Menu, label: "More" },
+  { id: "home", icon: Building2, label: "Home", href: "/" },
+  { id: "kao", icon: Store, label: "Kao", href: "/kao" },
+  { id: "growth", icon: Crown, label: "Growth", href: "/plus" },
+  { id: "more", icon: Menu, label: "More", href: "/settings" },
 ];
 
 export default function BottomNav() {
   const [active, setActive] = useState("home");
+  const { setCreatePostOpen } = usePostContext();
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 nav-surface border-t border-custom px-4 pb-8 pt-3 z-50">
@@ -31,6 +33,7 @@ export default function BottomNav() {
         ))}
 
         <button
+          onClick={() => setCreatePostOpen(true)}
           aria-label="Create new post"
           className="size-12 rounded bg-primary-gold text-black flex items-center justify-center -mt-8 shadow-xl border border-white/20 active:scale-95 transition-all"
         >

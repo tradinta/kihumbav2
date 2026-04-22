@@ -1,7 +1,5 @@
 // ─── Profile Mock Data & Types ───────────────────────────────────────────────
 
-export type Tier = 'PLEBIAN' | 'CITIZEN' | 'PATRICIAN' | 'TYCOON';
-
 export interface ProfileUser {
   id: string;
   username: string;
@@ -11,17 +9,25 @@ export interface ProfileUser {
   bio: string;
   county: string;
   country: string;
-  tier: Tier;
   isVerified: boolean;
   isVerifiedSeller: boolean;
-  joinedDate: string;
+  createdAt: string;
+  town?: string;
   website?: string;
   kihumbaScore: number;
+  interests: string[];
   stats: {
     posts: number;
     followers: number;
     following: number;
     deals: number;
+  };
+  _count?: {
+    posts: number;
+    followers: number;
+    following: number;
+    marketListings: number;
+    kaoListings: number;
   };
   scoreBreakdown: {
     trust: number;
@@ -97,12 +103,7 @@ export interface SimilarProfile {
 
 // ─── Mock User ───────────────────────────────────────────────────────────────
 
-export const TIER_COLORS: Record<Tier, string> = {
-  PLEBIAN: '#888888',
-  CITIZEN: '#c5a059',
-  PATRICIAN: '#e2c27d',
-  TYCOON: '#ffd700',
-};
+// ─── Mock User ───────────────────────────────────────────────────────────────
 
 export const mockUser: ProfileUser = {
   id: 'u1',
@@ -112,18 +113,26 @@ export const mockUser: ProfileUser = {
   coverPhoto: 'https://images.unsplash.com/photo-1611348586804-61bf6c080437?auto=format&fit=crop&q=80&w=1200',
   bio: 'Building the future of Kenyan social commerce. Nairobi tech scene 🇰🇪 | Marketplace power seller | Open to barter trades.',
   county: 'Nairobi',
+  town: 'Westlands',
   country: 'Kenya',
-  tier: 'PATRICIAN',
   isVerified: true,
   isVerifiedSeller: true,
-  joinedDate: 'January 2025',
+  createdAt: new Date('2025-01-15').toISOString(),
   website: 'kamau.dev',
   kihumbaScore: 92,
+  interests: ['Tech', 'Startups', 'Photography', 'Barter Trading', 'Nairobi Nightlife', 'Real Estate', 'Gaming'],
   stats: {
     posts: 142,
     followers: 2438,
     following: 384,
     deals: 67,
+  },
+  _count: {
+    posts: 142,
+    followers: 2438,
+    following: 384,
+    marketListings: 12,
+    kaoListings: 2
   },
   scoreBreakdown: {
     trust: 95,
@@ -220,7 +229,6 @@ export const achievements: Achievement[] = [
   { id: 'a5', label: 'Community Voice', icon: '📢', earned: true },
   { id: 'a6', label: '1K Followers', icon: '👥', earned: true },
   { id: 'a7', label: 'Kao Explorer', icon: '🏠', earned: false },
-  { id: 'a8', label: 'Tycoon Tier', icon: '👑', earned: false },
 ];
 
 // ─── Similar Profiles ────────────────────────────────────────────────────────

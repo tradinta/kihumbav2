@@ -9,24 +9,68 @@ generator client {
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
-enum Tier {
-  PLEBIAN
-  CITIZEN
-  PATRICIAN
-  TYCOON
-}
-
 enum Gender {
   MALE
   FEMALE
-  OTHER
+  OTHERS
   PREFER_NOT_TO_SAY
 }
 
 enum ContentType {
   TEXT
   PHOTO
+  VIDEO
+  RESHARE
+  QUOTE
+  EVENT
   POLL
+  DOCUMENT
+}
+
+enum CommentTargetType {
+  POST
+  MARKET_LISTING
+  KAO_LISTING
+  VIDEO
+  TRIBE_POST
+}
+
+enum TribePrivacy {
+  PUBLIC
+  PRIVATE
+  SECRET
+}
+
+enum TribeRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum TribeCategory {
+  COMMUNITY
+  EDUCATION
+  PROFESSIONAL
+  GAMING
+  ENTERTAINMENT
+  BRAND
+  OTHER
+}
+
+enum PropertyType {
+  SINGLE_ROOM
+  BEDSITTER
+  STUDIO
+  ONE_BEDROOM
+  TWO_BEDROOM
+  THREE_BEDROOM
+  DOUBLE_ROOM
+}
+
+enum UtilityType {
+  TOKEN
+  INCLUDED
+  PAID_EXTRA
 }
 
 enum InteractionType {
@@ -39,144 +83,471 @@ enum InteractionType {
 }
 
 enum NotificationType {
+  MENTION
+  FOLLOW
+  FOLLOW_REQUEST
+  FOLLOW_ACCEPT
   LIKE
   COMMENT
-  FOLLOW
-  RESHARE
-  MENTION
+  ORDER_UPDATE
+  MARKET_REPORT
+}
+
+enum ChatRoomType {
+  DM
+  GROUP
+  ANON
+}
+
+enum ChatRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum SubscriptionTier {
+  FREE
+  PLUS
+  PRO
+  ELITE
+}
+
+enum AccountType {
+  NORMAL
+  BUSINESS
+  GOVERNMENT
+}
+
+enum PartnerStatus {
+  INACTIVE
+  IN_REVIEW
+  VERIFIED
+  SUSPENDED
+  BANNED
+}
+
+enum CampaignStatus {
+  OPEN
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum BriefStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  DRAFT_SUBMITTED
+  CHANGES_REQUESTED
+  APPROVED
+  PAID
+  DISPUTED
+}
+
+enum EscrowStatus {
+  HELD
+  RELEASED
+  REFUNDED
+  DISPUTED
+}
+
+enum VideoVisibility {
+  PUBLIC
+  PRIVATE
+  SCHEDULED
+  UNLISTED
+}
+
+enum MonetizationStatus {
+  OFF
+  ON
+  PENDING_REVIEW
+  INELIGIBLE
 }
 
 // ─── User ─────────────────────────────────────────────────────────────────────
+// NOTE: Better Auth manages the core auth fields (name, email, emailVerified, image).
+// Our Kihumba-specific fields (tier, county, bio, etc.) extend the model.
 
 model User {
-  id              String    @id @default(uuid())
-  username        String    @unique
-  email           String?   @unique
-  phoneNumber     String?   @unique
-  passwordHash    String?
+  id                  String  @id @default(uuid())
+  username            String  @unique @default(uuid())
+  email               String  @unique
+  emailVerified       Boolean @default(false)
+  phoneNumber         String? @unique
+  phoneNumberVerified Boolean @default(false)
 
-  fullName        String?
-  avatar          String?
-  bio             String?
+  name     String? // Better Auth core field (display name)
+  fullName String? // Kihumba extended name
+  image    String? // Better Auth core field (avatar URL)
+  avatar   String? // Kihumba extended avatar
+  bio      String?
 
-  tier            Tier      @default(PLEBIAN)
-  county          String?
-  gender          Gender?
-  dateOfBirth     DateTime?
-  country         String    @default("Kenya")
+  county      String?
+  countyId    Int?
+  subCounty   String?
+  institution String?
+  gender      Gender?
+  dateOfBirth DateTime?
+  country     String    @default("Kenya")
 
-  profileComplete Boolean   @default(false)
-  isVerified      Boolean   @default(false)
-  isBanned        Boolean   @default(false)
+  accountType      AccountType      @default(NORMAL)
+  isReserved       Boolean          @default(false)
+  profileComplete  Boolean          @default(false)
+  isVerified       Boolean          @default(false)
+  isBanned         Boolean          @default(false)
+  subscriptionTier     SubscriptionTier @default(FREE)
+  subscriptionExpiresAt DateTime?
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  lastActiveAt    DateTime?
+  searchEngineIndexing Boolean @default(true)
+  privateAccount       Boolean @default(false)
+
+  numericId Int     @unique @default(autoincrement())
+  town      String?
+
+  // KPP Relations
+  partnerProfile PartnerProfile?
+  brandCampaigns Campaign[]
+  campaignBriefs CampaignBrief[]
+
+  website    String?
+  coverPhoto String?
+  interests  String[]
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastActiveAt DateTime?
+
+  registrationIp     String?
+  registrationDevice String?
 
   // Social graph
-  followers       Follow[]  @relation("Followed")
-  following       Follow[]  @relation("Follower")
-  blocks          Block[]   @relation("Blocker")
-  blockedBy       Block[]   @relation("Blocked")
+  followers Follow[] @relation("Followed")
+  following Follow[] @relation("Follower")
+  blocks    Block[]  @relation("Blocker")
+  blockedBy Block[]  @relation("Blocked")
+  mutes     Mute[]   @relation("Muter")
+  mutedBy   Mute[]   @relation("Muted")
 
   // Content
-  posts           Post[]
-  comments        Comment[]
-  interactions    UserInteraction[]
+  posts        Post[]
+  comments     Comment[]
+  interactions UserInteraction[]
+  videos       Video[]
 
   // Notifications
-  notifications         Notification[] @relation("NotificationRecipient")
-  sentNotifications     Notification[] @relation("NotificationSender")
+  notifications     Notification[] @relation("NotificationRecipient")
+  sentNotifications Notification[] @relation("NotificationSender")
 
   // Stories
-  fires           Fire[]
+  fires Fire[]
 
   // Kao Listings
-  kaoListings    KaoListing[]
+  kaoListings KaoListing[]
+  kaoReviews  KaoReview[]
 
   // Marketplace
-  sellerProfile       SellerProfile?
-  marketListings      MarketListing[]
-  marketBuyOrders     MarketOrder[]   @relation("MarketBuyer")
-  marketSellOrders    MarketOrder[]   @relation("MarketSeller")
-  marketReviewsGiven  MarketReview[]  @relation("ReviewAuthor")
-  marketReviewsReceived MarketReview[] @relation("ReviewTarget")
+  sellerProfile         SellerProfile?
+  marketListings        MarketListing[]
+  marketBuyOrders       MarketOrder[]   @relation("MarketBuyer")
+  marketSellOrders      MarketOrder[]   @relation("MarketSeller")
+  marketReviewsGiven    MarketReview[]  @relation("ReviewAuthor")
+  marketReviewsReceived MarketReview[]  @relation("ReviewTarget")
   // Market Reports
-  marketReports       MarketReport[]  @relation("ReportAuthor")
+  marketReports         MarketReport[]  @relation("ReportAuthor")
 
-  // Authentication & Sessions (Lucia Auth)
-  sessions            Session[]
+  // Tribes
+  createdTribes     Tribe[]            @relation("TribeCreator")
+  tribeMemberships  TribeMember[]
+  tribeJoinRequests TribeJoinRequest[]
+  tribeReports      TribeReport[]      @relation("Reporter")
+  tribeInvites      TribeInvite[]
+
+  // Kao Requests
+  kaoRequestsSent     KaoRequest[] @relation("KaoRequestsSent")
+  kaoRequestsReceived KaoRequest[] @relation("KaoRequestsReceived")
+
+  // Chat
+  fireViews          FireView[]
+  chatParticipations Participant[]
+  sentMessages       ChatMessage[]
+  chatJoinRequests   JoinRequest[]
+  
+  // Gamification
+  loginStreak Int @default(0)
+  lastLoginAt DateTime?
+  badges      UserBadge[]
+
+  // Authentication & Sessions (Better Auth)
+  twoFactorEnabled Boolean @default(false)
+  sessions         Session[]
+  accounts         Account[]
+  twoFactors       TwoFactor[]
+  passkeys         Passkey[]
+  auditLogs        SecurityAuditLog[]
+  messagingSettings MessagingSettings?
 }
 
-// ─── Authentication & Sessions (Lucia Auth) ────────────────────────────────────
+model SecurityAuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  event     String   // e.g., "EMAIL_CHANGE", "PASSWORD_CHANGE", "MFA_ENABLED"
+  oldValue  String?
+  newValue  String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Authentication & Sessions (Better Auth) ───────────────────────────────────
 
 model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
+  token     String   @unique // Better Auth session token
+  ipAddress String? // Client IP for audit
+  userAgent String? // Browser user-agent for audit
 
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+// Better Auth multi-provider account table
+// Stores credentials per auth method (email/password, Google, Apple, etc.)
+model Account {
+  id                    String    @id @default(uuid())
+  userId                String
+  accountId             String // Provider-specific user ID
+  providerId            String // e.g. "credential", "google", "apple"
+  accessToken           String? // OAuth access token
+  refreshToken          String? // OAuth refresh token
+  accessTokenExpiresAt  DateTime? // Token expiry
+  refreshTokenExpiresAt DateTime?
+  scope                 String? // OAuth scopes
+  idToken               String? // OIDC ID token
+  password              String? // Hashed password for "credential" provider
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
-model OtpVerification {
-  id          String   @id @default(uuid())
-  phoneNumber String
-  email       String?
-  code        String
-  expiresAt   DateTime
-  isVerified  Boolean  @default(false)
-  
-  createdAt   DateTime @default(now())
+// Better Auth verification tokens (email verification, password reset, etc.)
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String // email or phone number
+  value      String // hashed token or OTP
+  expiresAt  DateTime
 
-  @@index([phoneNumber, code]) // Fast lookups during verification
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  aaguid       String?
+  createdAt    DateTime?
+
+  @@index([userId])
+}
+
+model TwoFactor {
+  id          String   @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified    Boolean
+
+  @@index([userId])
 }
 
 // ─── Follow / Block ───────────────────────────────────────────────────────────
 
-model Follow {
-  followerId  String
-  followedId  String
-  createdAt   DateTime @default(now())
+enum FollowStatus {
+  PENDING
+  ACCEPTED
+}
 
-  follower    User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  followed    User @relation("Followed", fields: [followedId], references: [id], onDelete: Cascade)
+model Follow {
+  followerId String
+  followedId String
+  createdAt  DateTime     @default(now())
+  status     FollowStatus @default(ACCEPTED)
+
+  follower User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followed User @relation("Followed", fields: [followedId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followedId])
 }
 
 model Block {
-  blockerId   String
-  blockedId   String
-  createdAt   DateTime @default(now())
-  reason      String?
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  reason    String?
 
-  blocker     User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked     User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blocker User @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@id([blockerId, blockedId])
+}
+
+model Mute {
+  muterId   String
+  mutedId   String
+  createdAt DateTime @default(now())
+
+  muter User @relation("Muter", fields: [muterId], references: [id], onDelete: Cascade)
+  muted User @relation("Muted", fields: [mutedId], references: [id], onDelete: Cascade)
+
+  @@id([muterId, mutedId])
+}
+
+// ─── Kihumba Partner Program (KPP) ───────────────────────────────────────────
+
+model PartnerProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  status PartnerStatus @default(IN_REVIEW)
+  kts    Int           @default(80) // Kihumba Trust Score 0-100
+
+  adRevEnabled     Boolean @default(false)
+  sparkFundEnabled Boolean @default(false)
+
+  totalEarned    Float @default(0.0)
+  currentBalance Float @default(0.0)
+  pendingBalance Float @default(0.0)
+
+  bankDetails Json? // { bank: string, account: string, branch: string }
+  mpesaNumber String?
+  taxId       String? // For KRA WHT compliance
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Campaign {
+  id      String @id @default(uuid())
+  brandId String
+  brand   User   @relation(fields: [brandId], references: [id])
+
+  title        String
+  description  String
+  deliverables Json // Array of required content types/details
+  budgetTotal  Float
+  status       CampaignStatus @default(OPEN)
+
+  briefs        CampaignBrief[]
+  escrowRecords EscrowRecord[]
+
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+}
+
+model CampaignBrief {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  partnerId String
+  partner   User   @relation(fields: [partnerId], references: [id])
+
+  status       BriefStatus @default(PENDING)
+  draftUrl     String?
+  payoutAmount Float
+
+  disputeReason String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model EscrowRecord {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+
+  briefId String       @unique
+  amount  Float
+  status  EscrowStatus @default(HELD)
+
+  releaseDate DateTime // usually approvedAt + 72 hours
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ─── Post ─────────────────────────────────────────────────────────────────────
 
 model Post {
-  id           String      @id @default(uuid())
-  content      String
-  imageUrl     String?
-  contentType  ContentType @default(TEXT)
-  isPinned     Boolean     @default(false)
-  isDeleted    Boolean     @default(false)
-  viewCount    Int         @default(0)
+  id          String      @id @default(uuid())
+  content     String
+  media       Json? // Array of { type: "image"|"video", src: string, alt?: string, aspectRatio?: number }
+  contentType ContentType @default(TEXT)
+  isPinned    Boolean     @default(false)
+  isDeleted   Boolean     @default(false)
+  viewCount   Int         @default(0)
 
-  authorId     String
-  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Direct Video Link for Siloing
+  videoId String? @unique
+  video   Video?  @relation(fields: [videoId], references: [id], onDelete: SetNull)
+
+  // Reshare / Quote Post support
+  originalPostId String?
+  originalPost   Post?   @relation("Reshares", fields: [originalPostId], references: [id], onDelete: SetNull)
+  reshares       Post[]  @relation("Reshares")
 
   comments     Comment[]
   interactions UserInteraction[]
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  // Tribe Integration
+  tribeId String?
+  tribe   Tribe?  @relation(fields: [tribeId], references: [id], onDelete: SetNull)
+
+  // Marketplace Integration
+  marketListingId String?
+  marketListing   MarketListing? @relation(fields: [marketListingId], references: [id], onDelete: SetNull)
+
+  // Kao Integration
+  kaoListingId String?
+  kaoListing   KaoListing? @relation(fields: [kaoListingId], references: [id], onDelete: SetNull)
+
+  // Expanded Curation
+  event        Event?
+  poll         Poll?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([authorId])
   @@index([createdAt(sort: Desc)])
@@ -185,26 +556,41 @@ model Post {
 // ─── Comment ──────────────────────────────────────────────────────────────────
 
 model Comment {
-  id        String    @id @default(uuid())
-  content   String
-  isDeleted Boolean   @default(false)
+  id         String            @id @default(uuid())
+  content    String
+  media      Json? // Array of { type: "image"|"gif", url: string }
+  isDeleted  Boolean           @default(false)
+  targetType CommentTargetType @default(POST)
 
-  authorId  String
-  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  postId    String
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  // Targets (Polymorphic)
+  postId String?
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  parentId  String?
-  parent    Comment?  @relation("Replies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("Replies")
+  marketListingId String?
+  marketListing   MarketListing? @relation(fields: [marketListingId], references: [id], onDelete: Cascade)
+
+  kaoListingId String?
+  kaoListing   KaoListing? @relation(fields: [kaoListingId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   Comment?  @relation("Replies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("Replies")
 
   interactions UserInteraction[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  // Tribe Integration
+  tribeId String?
+  tribe   Tribe?  @relation(fields: [tribeId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([postId])
+  @@index([marketListingId])
+  @@index([kaoListingId])
 }
 
 // ─── User Interaction ─────────────────────────────────────────────────────────
@@ -215,36 +601,40 @@ model UserInteraction {
   userId    String
   postId    String?
   commentId String?
+  videoId   String?
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  video   Video?   @relation(fields: [videoId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
   @@unique([userId, postId, type])
   @@unique([userId, commentId, type])
+  @@unique([userId, videoId, type])
   @@index([userId])
   @@index([postId])
+  @@index([videoId])
 }
 
 // ─── Notification ─────────────────────────────────────────────────────────────
 
 model Notification {
-  id          String           @id @default(uuid())
-  type        NotificationType
-  isRead      Boolean          @default(false)
+  id     String           @id @default(uuid())
+  type   NotificationType
+  isRead Boolean          @default(false)
 
   recipientId String
   recipient   User   @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
 
-  senderId    String?
-  sender      User?  @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  senderId String?
+  sender   User?   @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
 
-  postId      String?
-  commentId   String?
+  postId    String?
+  commentId String?
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([recipientId, isRead])
 }
@@ -257,13 +647,85 @@ model Fire {
   content   String?
   expiresAt DateTime
 
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  viewCount Int        @default(0)
+  views     FireView[]
 
   createdAt DateTime @default(now())
 
   @@index([authorId])
   @@index([expiresAt])
+}
+
+model FireView {
+  id     String @id @default(uuid())
+  fireId String
+  fire   Fire   @relation(fields: [fireId], references: [id], onDelete: Cascade)
+
+  viewerId String
+  viewer   User   @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([fireId, viewerId])
+  @@index([fireId])
+}
+
+// ─── Video (Sparks & Wide) ────────────────────────────────────────────────────
+
+model Video {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+
+  uploadId   String? @unique // Mux upload ID
+  assetId    String? @unique // Mux asset ID
+  playbackId String? // For Mux Player
+  duration   Float?
+  status     String  @default("uploading") // uploading, ready, errored
+
+  isSpark   Boolean @default(false) // < 151s
+  viewCount Int     @default(0)
+
+  // New Metadata Pulse
+  visibility   VideoVisibility    @default(PRIVATE)
+  thumbnailUrl String?
+  videoUrl     String? // Direct R2 URL
+  r2Key        String? // R2 Object Key for decommissioning
+  isMonetized  Boolean            @default(false)
+  monetization MonetizationStatus @default(OFF)
+
+  scheduledAt DateTime?
+  deletedAt   DateTime? // For Soft Delete
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  interactions UserInteraction[]
+  retention    VideoRetention?
+  post         Post?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([createdAt(sort: Desc)])
+}
+
+model VideoRetention {
+  id      String @id @default(uuid())
+  videoId String @unique
+  video   Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  watched3Min   Int @default(0)
+  watched50Pct  Int @default(0)
+  watched100Pct Int @default(0)
+
+  updatedAt DateTime @updatedAt
 }
 
 // ─── Kao (Real Estate) ────────────────────────────────────────────────────────
@@ -274,30 +736,83 @@ enum ListingType {
 }
 
 model KaoListing {
-  id           String      @id @default(uuid())
+  id           String       @id @default(uuid())
   title        String
   description  String
-  type         String      // Bedsitter, 1BR, 2BR, etc.
-  listingType  ListingType @default(RENTAL)
-  price        Float
+  type         PropertyType @default(BEDSITTER)
+  listingType  ListingType  @default(RENTAL)
+  price        Float?
+  deposit      Float?
+  rentDeadline String? // e.g. "5th" or "Every Sunday"
   county       String
   area         String
-  lat          Float?      // To support Leaflet Map Pins
+  lat          Float? // To support Leaflet Map Pins
   lng          Float?
-  images       String[]    // Array of URLs
-  tags         String[]    // wifi, deposit to include
-  vacantCount  Int         @default(1)
-  isVerified   Boolean     @default(false)
-  
-  authorId     String
-  author       User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  images       String[] // Array of URLs
+  amenities    String[] // wifi, security etc
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  // Roommate Specifics
+  preferredGender String? // MALE, FEMALE, ANY
+  maxRoommates    Int?     @default(1)
+  lifestyle       String[] // e.g. ["Non-smoker", "Pet-friendly", "Student"]
+  isShared        Boolean  @default(false)
+
+  // Financials
+  hasDeposit      Boolean     @default(false)
+  depositAmount   Float?
+  serviceCharge   Float?
+  electricityType UtilityType @default(TOKEN)
+  waterType       UtilityType @default(INCLUDED)
+
+  // Experience & Proximity
+  safetyScore       Int     @default(5)
+  friendlinessScore Int     @default(5)
+  proximityScore    Int     @default(5)
+  proximityDetails  String? // manual description
+
+  isIndividual Boolean @default(true)
+  vacantCount  Int     @default(1)
+  isVerified   Boolean @default(false)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  reviews  KaoReview[]
+  comments Comment[]
+  posts    Post[]
+  requests KaoRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([authorId])
   @@index([county, area])
   @@index([createdAt(sort: Desc)])
+}
+
+model KaoReview {
+  id String @id @default(uuid())
+
+  // 5-Point Rating System
+  safety                  Int @default(5)
+  proximity               Int @default(5)
+  water                   Int @default(5)
+  electricity             Int @default(5)
+  environmentFriendliness Int @default(5)
+
+  comment String?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  listingId String
+  listing   KaoListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([listingId])
+  @@index([authorId])
 }
 
 // ─── Marketplace ──────────────────────────────────────────────────────────────
@@ -316,9 +831,9 @@ enum MarketCategory {
 }
 
 enum TradeType {
-  SELL
+  BUY
   BARTER
-  BOTH
+  TRADE_CASH
 }
 
 enum ItemCondition {
@@ -341,53 +856,58 @@ enum OrderStatus {
 }
 
 model SellerProfile {
-  id              String    @id @default(uuid())
-  storeName       String
-  bio             String?
-  logo            String?
-  banner          String?
-  isVerified      Boolean   @default(false)
-  responseRate    Float     @default(0)
-  completedDeals  Int       @default(0)
-  safetyScore     Float     @default(50) // 0-100
+  id             String  @id @default(uuid())
+  storeName      String
+  bio            String?
+  logo           String?
+  banner         String?
+  isVerified     Boolean @default(false)
+  responseRate   Float   @default(0)
+  completedDeals Int     @default(0)
+  safetyScore    Float   @default(50) // 0-100
 
-  userId          String    @unique
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  listings        MarketListing[]
+  listings MarketListing[]
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MarketListing {
-  id              String          @id @default(uuid())
-  title           String
-  description     String
-  price           Float
-  category        MarketCategory  @default(OTHER)
-  tradeType       TradeType       @default(SELL)
-  barterFor       String?         // What they'd accept in trade
-  condition       ItemCondition   @default(GOOD)
-  county          String
-  area            String
-  images          String[]
-  tags            String[]
-  flagCount       Int             @default(0)
-  isActive        Boolean         @default(true)
+  id            String         @id @default(uuid())
+  title         String
+  description   String
+  price         Float
+  category      MarketCategory @default(OTHER)
+  tradeType     TradeType      @default(BUY)
+  barterFor     String? // What they'd accept in trade
+  condition     ItemCondition  @default(GOOD)
+  county        String
+  area          String
+  images        String[]
+  tags          String[]
+  flagCount     Int            @default(0)
+  sellerPhone   String?
+  whatsIncluded String[]
+  viewCount     Int            @default(0)
+  isActive      Boolean        @default(true)
 
-  sellerId        String
-  seller          User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId String
+  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   sellerProfileId String?
-  sellerProfile   SellerProfile?  @relation(fields: [sellerProfileId], references: [id])
+  sellerProfile   SellerProfile? @relation(fields: [sellerProfileId], references: [id])
 
-  orders          MarketOrder[]
-  reviews         MarketReview[]
-  reports         MarketReport[]
+  orders   MarketOrder[]
+  reviews  MarketReview[]
+  reports  MarketReport[]
+  comments Comment[]
+  posts    Post[]
 
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([sellerId])
   @@index([county, category])
@@ -395,69 +915,417 @@ model MarketListing {
 }
 
 model MarketOrder {
-  id              String       @id @default(uuid())
-  amount          Float
-  escrowHeld      Boolean      @default(false)
-  status          OrderStatus  @default(PENDING)
-  deliveryCode    String?      // Code driver uses to confirm delivery
-  saccoName       String?
-  driverName      String?
-  driverPhone     String?
+  id           String      @id @default(uuid())
+  amount       Float
+  escrowHeld   Boolean     @default(false)
+  status       OrderStatus @default(PENDING)
+  deliveryCode String? // Code driver uses to confirm delivery
+  saccoName    String?
+  driverName   String?
+  driverPhone  String?
 
-  buyerId         String
-  buyer           User         @relation("MarketBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId String
+  buyer   User   @relation("MarketBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
 
-  sellerId        String
-  seller          User         @relation("MarketSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId String
+  seller   User   @relation("MarketSeller", fields: [sellerId], references: [id], onDelete: Cascade)
 
-  listingId       String
-  listing         MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
-  review          MarketReview?
+  review MarketReview?
 
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([buyerId])
   @@index([sellerId])
 }
 
 model MarketReview {
-  id          String   @id @default(uuid())
-  rating      Int      // 1-5
-  comment     String?
+  id      String  @id @default(uuid())
+  rating  Int // 1-5
+  comment String?
 
-  fromUserId  String
-  fromUser    User     @relation("ReviewAuthor", fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUserId String
+  fromUser   User   @relation("ReviewAuthor", fields: [fromUserId], references: [id], onDelete: Cascade)
 
-  toUserId    String
-  toUser      User     @relation("ReviewTarget", fields: [toUserId], references: [id], onDelete: Cascade)
+  toUserId String
+  toUser   User   @relation("ReviewTarget", fields: [toUserId], references: [id], onDelete: Cascade)
 
-  listingId   String
-  listing     MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
-  orderId     String   @unique
-  order       MarketOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String      @unique
+  order   MarketOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([toUserId])
 }
 
 model MarketReport {
-  id          String   @id @default(uuid())
-  reason      String
-  details     String?
-  resolved    Boolean  @default(false)
+  id       String  @id @default(uuid())
+  reason   String
+  details  String?
+  resolved Boolean @default(false)
 
-  reporterId  String
-  reporter    User     @relation("ReportAuthor", fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+  reporter   User   @relation("ReportAuthor", fields: [reporterId], references: [id], onDelete: Cascade)
 
-  listingId   String
-  listing     MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   MarketListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([listingId])
 }
 
+// ─── Tribes ───────────────────────────────────────────────────────────────────
+
+model Tribe {
+  id         String        @id @default(uuid())
+  internalId String        @unique @default(cuid()) // Industrial ID for internal tracking
+  name       String
+  slug       String        @unique
+  bio        String?
+  category   TribeCategory @default(OTHER)
+  privacy    TribePrivacy  @default(PUBLIC)
+  logo       String?
+  cover      String?
+
+  creatorId String
+  creator   User   @relation("TribeCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  postVisibility TribePostVisibility @default(EVERYONE)
+  
+  rules        String[]      @default([])
+  visitCount   Int           @default(0)
+  visits       TribeVisit[]
+  invites      TribeInvite[]
+
+  members      TribeMember[]
+  posts        Post[]
+  comments     Comment[]
+  questions    TribeQuestion[]
+  joinRequests TribeJoinRequest[]
+  reports      TribeReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([category])
+  @@index([internalId])
+}
+
+enum TribePostVisibility {
+  EVERYONE
+  MEMBERS
+}
+
+model TribeInvite {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  tribeId   String
+  inviterId String
+  
+  maxUses   Int?
+  usedCount Int      @default(0)
+  expiresAt DateTime?
+
+  tribe   Tribe @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+  inviter User  @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([code])
+  @@index([tribeId])
+}
+
+model TribeVisit {
+  id        String   @id @default(uuid())
+  tribeId   String
+  tribe     Tribe    @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([tribeId])
+  @@index([createdAt])
+}
+
+model TribeMember {
+  userId  String
+  tribeId String
+  role    TribeRole @default(MEMBER)
+
+  // Governance flags
+  isBanned         Boolean @default(false)
+  isRestricted     Boolean @default(false) // Muted/Read-only
+  requiresApproval Boolean @default(false) // Posts need approval
+
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tribe Tribe @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, tribeId])
+}
+
+model TribeQuestion {
+  id      String @id @default(uuid())
+  text    String
+  tribeId String
+  tribe   Tribe  @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Kao Requests ───
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model KaoRequest {
+  id        String     @id @default(uuid())
+  listingId String
+  listing   KaoListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation("KaoRequestsSent", fields: [senderId], references: [id], onDelete: Cascade)
+
+  receiverId String
+  receiver   User   @relation("KaoRequestsReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  message String?
+  status  RequestStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([listingId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+model TribeJoinRequest {
+  id      String @id @default(uuid())
+  status  String @default("PENDING") // PENDING, APPROVED, REJECTED
+  answers Json? // Array of { questionId: string, answer: string }
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tribeId String
+  tribe   Tribe  @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([tribeId])
+}
+
+model TribeReport {
+  id       String  @id @default(uuid())
+  reason   String
+  details  String?
+  resolved Boolean @default(false)
+
+  reporterId String
+  reporter   User   @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  tribeId String
+  tribe   Tribe  @relation(fields: [tribeId], references: [id], onDelete: Cascade)
+
+  postId    String?
+  commentId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([tribeId])
+}
+
+// ─── Chat ───────────────────────────────────────────────────────────────────
+
+model ChatRoom {
+  id          String       @id @default(uuid())
+  name        String? // Optional for DMs
+  slug        String?      @unique // For public/shareable groups
+  description String?
+  type        ChatRoomType @default(DM)
+  avatar      String?
+  metadata    Json? // { topic: string, lastMessageAt: string, cover: string, privacy: string, memberLimit: number }
+
+  participants Participant[]
+  messages     ChatMessage[]
+  joinRequests JoinRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JoinRequest {
+  id        String   @id @default(uuid())
+  roomId    String
+  userId    String
+  status    String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+}
+
+model Participant {
+  userId String
+  roomId String
+  role   ChatRole @default(MEMBER)
+
+  joinedAt   DateTime  @default(now())
+  lastReadAt DateTime  @default(now())
+  mutedUntil DateTime?
+  isArchived Boolean   @default(false)
+  isBanned   Boolean   @default(false)
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roomId])
+}
+
+model MessagingSettings {
+  userId           String  @id
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keepArchived     Boolean @default(true)
+  readReceipts     Boolean @default(true)
+  showOnlineStatus Boolean @default(true)
+  lastUpdated      DateTime @default(now()) @updatedAt
+}
+
+model ChatMessage {
+  id       String @id @default(uuid())
+  content  String
+  type     String @default("TEXT") // TEXT, IMAGE, VIDEO, POLL, MARKET, KAO
+  metadata Json? // { mediaUrl: string, pollData: {}, embeddedPostId: string, etc }
+
+  isDeleted Boolean @default(false)
+  isEdited  Boolean @default(false)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  roomId String
+  room   ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  replyToId String?
+  replyTo   ChatMessage?  @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies   ChatMessage[] @relation("MessageReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([roomId])
+  @@index([senderId])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ─── Event ────────────────────────────────────────────────────────────────────
+model Event {
+  id          String   @id @default(uuid())
+  postId      String   @unique
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  title       String
+  organizer   String
+  date        DateTime
+  endDate     DateTime?
+  venue       String
+  price       String?          // "Free" or "KES 3,500"
+  externalLink String?
+  description String?
+  posterUrl   String?          // Event poster image (R2 URL)
+  isVerified  Boolean @default(false) // Only sellers.kihumba.com gets true
+  isActive    Boolean @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([isVerified])
+}
+
+// ─── Poll ─────────────────────────────────────────────────────────────────────
+model Poll {
+  id            String   @id @default(uuid())
+  postId        String   @unique
+  post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  question      String
+  allowMultiple Boolean  @default(false)  // Can vote for >1 option
+  isQuiz        Boolean  @default(false)  // Correct-answer mode
+  endsAt        DateTime?
+
+  options       PollOption[]
+  votes         PollVote[]
+
+  createdAt     DateTime @default(now())
+
+  @@index([endsAt])
+}
+
+model PollOption {
+  id        String  @id @default(uuid())
+  pollId    String
+  poll      Poll    @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  text      String
+  isCorrect Boolean @default(false) // Only used when poll.isQuiz = true
+  sortOrder Int     @default(0)
+
+  votes     PollVote[]
+}
+
+model PollVote {
+  id       String @id @default(uuid())
+  pollId   String
+  poll     Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionId String
+  option   PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  userId   String
+
+  createdAt DateTime @default(now())
+
+  @@unique([pollId, optionId, userId]) // One vote per option per user
+  @@index([pollId])
+  @@index([userId])
+}
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  icon        String?  // URL or Lucide icon name
+  category    String   // PIONEER, KAO, INFLUENCER, STREAK, etc.
+  rarity      String   @default("COMMON") // COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
+  
+  users       UserBadge[]
+
+  createdAt DateTime @default(now())
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}

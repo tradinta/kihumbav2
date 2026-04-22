@@ -1,55 +1,57 @@
 import {
-    Controller, Post, Patch, Get, Body, Param, Req, Res, HttpCode, HttpStatus,
+    Controller, Patch, Post, Get, Body, Param, Req, UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
-import { SignupDto, LoginDto, OnboardingDto } from './auth.dto';
-import type { Response } from 'express';
+import { OnboardingDto, SoftAuthGuard } from './better-auth';
+import type { Request } from 'express';
 
-@Controller('auth')
-export class AuthController {
+// NOTE: signup, login, logout, and session management are all handled
+// automatically by Better Auth via the BetterAuthMiddleware.
+// Routes: POST /api/auth/sign-up/email, POST /api/auth/sign-in/email,
+//         POST /api/auth/sign-out, GET /api/auth/get-session, etc.
+//
+// This controller only handles custom Kihumba-specific routes.
+
+@Controller('account')
+export class AccountController {
     constructor(private readonly authService: AuthService) { }
-
-    @Post('signup')
-    @Throttle({ default: { ttl: 300000, limit: 5 } })
-    async signup(@Body() dto: SignupDto, @Res({ passthrough: true }) res: Response) {
-        const { sessionCookie, user } = await this.authService.signup(dto);
-        res.setHeader('Set-Cookie', sessionCookie.serialize());
-        return user;
-    }
-
-    @Post('login')
-    @Throttle({ default: { ttl: 60000, limit: 10 } })
-    @HttpCode(HttpStatus.OK)
-    async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-        const { sessionCookie, user } = await this.authService.login(dto);
-        res.setHeader('Set-Cookie', sessionCookie.serialize());
-        return user;
-    }
-
-    @Post('logout')
-    @HttpCode(HttpStatus.OK)
-    async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-        // Assume session id is attached to req by global middleware/guard
-        if (req.sessionId) {
-            const blankCookie = await this.authService.logout(req.sessionId);
-            res.setHeader('Set-Cookie', blankCookie.serialize());
-        }
-        return { success: true };
+    
+    @Post('forgot-password')
+    async forgotPassword(@Body('identifier') identifier: string, @Body('mode') mode: 'magic' | 'reset') {
+        console.log(`[AUTH] Recovery request for: ${identifier} (mode: ${mode})`);
+        return this.authService.forgotPassword(identifier, mode);
     }
 
     @Patch('onboarding')
-    onboarding(@Req() req: any, @Body() dto: OnboardingDto) {
-        return this.authService.onboarding(req.user.id, dto);
+    async onboarding(@Req() req: Request, @Body() dto: OnboardingDto) {
+        const user = await this.authService.getCurrentUser(req);
+        // Ensure IP is captured even if frontend doesn't send it
+        const onboardingData = {
+            ...dto,
+            registrationIp: dto.registrationIp || req.ip || req.headers['x-forwarded-for']?.toString() || req.socket.remoteAddress,
+        };
+        return this.authService.onboarding(user.id, onboardingData);
     }
 
     @Get('check-username/:username')
-    checkUsername(@Param('username') username: string) {
-        return this.authService.checkUsername(username);
+    @UseGuards(SoftAuthGuard)
+    checkUsername(@Param('username') username: string, @Req() req: any) {
+        return this.authService.checkUsername(username, req.user?.id);
+    }
+
+    @Get('status')
+    async getStatus(@Req() req: Request) {
+        const userSession = await this.authService.getCurrentUser(req);
+        const user = await this.authService.getMe(userSession.id);
+        return { 
+            profileComplete: user.profileComplete,
+            username: user.username 
+        };
     }
 
     @Get('me')
-    getMe(@Req() req: any) {
-        return this.authService.getMe(req.user.id);
+    async getMe(@Req() req: Request) {
+        const user = await this.authService.getCurrentUser(req);
+        return this.authService.getMe(user.id);
     }
 }

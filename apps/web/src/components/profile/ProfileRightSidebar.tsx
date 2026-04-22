@@ -38,10 +38,10 @@ export default function ProfileRightSidebar({ user, achievements, similarProfile
           <span className="text-primary-gold/50">◆</span> Kihumba Score
         </h3>
         <div className="space-y-2.5">
-          <ScoreBar label="Trust" value={user.scoreBreakdown.trust} />
-          <ScoreBar label="Activity" value={user.scoreBreakdown.activity} />
-          <ScoreBar label="Community" value={user.scoreBreakdown.community} />
-          <ScoreBar label="Marketplace" value={user.scoreBreakdown.marketplace} />
+          <ScoreBar label="Trust" value={user?.scoreBreakdown?.trust || 0} />
+          <ScoreBar label="Activity" value={user?.scoreBreakdown?.activity || 0} />
+          <ScoreBar label="Community" value={user?.scoreBreakdown?.community || 0} />
+          <ScoreBar label="Marketplace" value={user?.scoreBreakdown?.marketplace || 0} />
         </div>
         <div className="mt-3 pt-3 border-t border-custom flex items-center justify-between">
           <span className="text-[8px] font-bold uppercase tracking-widest text-muted-custom">Overall</span>

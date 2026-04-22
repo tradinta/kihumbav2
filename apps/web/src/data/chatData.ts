@@ -1,21 +1,24 @@
 // ─── Chat Mock Data ──────────────────────────────────────────────────────────
 
 export interface ChatUser {
-  id: number;
+  id: string;
   name: string;
   avatar?: string;
 }
 
 export interface GroupMember {
-  id: number;
+  id: string;
   name: string;
+  username?: string;
   avatar: string;
   isVerified: boolean;
-  role?: 'admin' | 'member';
+  role?: 'OWNER' | 'ADMIN' | 'MODERATOR' | 'MEMBER';
+  subscriptionTier?: string;
+  accountType?: string;
 }
 
 export interface Story {
-  id: number;
+  id: string;
   type: 'add' | 'story';
   name?: string;
   avatar?: string;
@@ -24,17 +27,32 @@ export interface Story {
 }
 
 export interface Chat {
-  id: number;
+  id: string;
   type: 'dm' | 'group' | 'anon';
   name: string;
+  username?: string;
+  isOnline?: boolean;
   avatar: string | null;
+  description?: string;
   lastMsg: string;
   time: string;
   unread: number;
   isPremium: boolean;
   isAnon: boolean;
   members?: number;
+  slug?: string;
   groupMembers?: GroupMember[];
+  metadata?: {
+    isRequest?: boolean;
+    status?: 'PENDING' | 'ACCEPTED' | 'IGNORED';
+    requestStatus?: 'PENDING' | 'ACCEPTED' | 'IGNORED';
+    initiatedBy?: string;
+    initiatorId?: string;
+    cover?: string;
+    privacy?: 'PUBLIC' | 'PRIVATE';
+    memberLimit?: number;
+    creatorId?: string;
+  };
 }
 
 export interface EmbeddedPost {
@@ -76,12 +94,12 @@ export interface PollData {
 }
 
 export interface Message {
-  id: number;
-  senderId: number;
+  id: string;
+  senderId: string;
   senderName?: string;
   senderAvatar?: string;
   senderVerified?: boolean;
-  text: string;
+  content: string;
   type: string;
   time: string;
   replyTo?: Message | null;
@@ -93,46 +111,48 @@ export interface Message {
   embeddedMarket?: EmbeddedMarketListing;
   embeddedKao?: EmbeddedKaoListing;
   pollData?: PollData;
+  metadata?: any;
+  sender?: any;
 }
 
 export const currentUser: ChatUser = {
-  id: 0,
+  id: "0",
   name: "You",
 };
 
 export const stories: Story[] = [
-  { id: 1, type: 'add' },
-  { id: 2, type: 'story', name: 'Elena', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', viewed: false, isPremium: true },
-  { id: 3, type: 'story', name: 'Marcus', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', viewed: false, isPremium: false },
-  { id: 4, type: 'story', name: 'Studio', avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200', viewed: true, isPremium: true },
-  { id: 5, type: 'story', name: 'Sarah', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', viewed: true, isPremium: false },
+  { id: '1', type: 'add' },
+  { id: '2', type: 'story', name: 'Elena', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', viewed: false, isPremium: true },
+  { id: '3', type: 'story', name: 'Marcus', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', viewed: false, isPremium: false },
+  { id: '4', type: 'story', name: 'Studio', avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200', viewed: true, isPremium: true },
+  { id: '5', type: 'story', name: 'Sarah', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', viewed: true, isPremium: false },
 ];
 
 // ─── Group members for Design Sync group ─────────────────────────────────────
 const designSyncMembers: GroupMember[] = [
-  { id: 0, name: 'You', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200', isVerified: false, role: 'admin' },
-  { id: 10, name: 'Elena Voss', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', isVerified: true, role: 'admin' },
-  { id: 11, name: 'Marcus Webb', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', isVerified: false, role: 'member' },
-  { id: 12, name: 'Sarah Kimani', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', isVerified: true, role: 'member' },
-  { id: 13, name: 'James Odhiambo', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', isVerified: true, role: 'member' },
+  { id: '0', name: 'You', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200', isVerified: false, role: 'ADMIN' },
+  { id: '10', name: 'Elena Voss', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', isVerified: true, role: 'ADMIN' },
+  { id: '11', name: 'Marcus Webb', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', isVerified: false, role: 'MEMBER' },
+  { id: '12', name: 'Sarah Kimani', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', isVerified: true, role: 'MEMBER' },
+  { id: '13', name: 'James Odhiambo', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', isVerified: true, role: 'MEMBER' },
 ];
 
 export const initialChats: Chat[] = [
-  { id: 1, type: 'dm', name: 'Elena Voss', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', lastMsg: 'Check out this listing I found! 🏠', time: '2m', unread: 2, isPremium: true, isAnon: false },
-  { id: 2, type: 'group', name: 'Design Sync', avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200', lastMsg: 'Sarah: Vote on the poll! 📊', time: '1h', unread: 3, isPremium: false, isAnon: false, members: 5, groupMembers: designSyncMembers },
-  { id: 3, type: 'anon', name: 'Neon Fox', avatar: null, lastMsg: 'Are we still on for the confidential launch?', time: '3h', unread: 1, isPremium: false, isAnon: true },
-  { id: 4, type: 'dm', name: 'Marcus Webb', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', lastMsg: "Let's catch up tomorrow morning.", time: '1d', unread: 0, isPremium: false, isAnon: false },
-  { id: 5, type: 'group', name: 'Engineering', avatar: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=200', lastMsg: 'Deployment successful. No downtime.', time: '2d', unread: 0, isPremium: false, isAnon: false, members: 12 },
-  { id: 6, type: 'dm', name: 'Sarah Kimani', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', lastMsg: 'Thanks for the update!', time: '3d', unread: 0, isPremium: true, isAnon: false },
+  { id: '1', type: 'dm', name: 'Elena Voss', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', lastMsg: 'Check out this listing I found! 🏠', time: '2m', unread: 2, isPremium: true, isAnon: false },
+  { id: '2', type: 'group', name: 'Design Sync', avatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200', lastMsg: 'Sarah: Vote on the poll! 📊', time: '1h', unread: 3, isPremium: false, isAnon: false, members: 5, groupMembers: designSyncMembers },
+  { id: '3', type: 'anon', name: 'Neon Fox', avatar: null, lastMsg: 'Are we still on for the confidential launch?', time: '3h', unread: 1, isPremium: false, isAnon: true },
+  { id: '4', type: 'dm', name: 'Marcus Webb', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', lastMsg: "Let's catch up tomorrow morning.", time: '1d', unread: 0, isPremium: false, isAnon: false },
+  { id: '5', type: 'group', name: 'Engineering', avatar: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=200', lastMsg: 'Deployment successful. No downtime.', time: '2d', unread: 0, isPremium: false, isAnon: false, members: 12 },
+  { id: '6', type: 'dm', name: 'Sarah Kimani', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', lastMsg: 'Thanks for the update!', time: '3d', unread: 0, isPremium: true, isAnon: false },
 ];
 
 // ─── DM Messages (Elena — includes embedded content) ─────────────────────────
 export const dmMessages: Message[] = [
   {
-    id: 1, senderId: 1, text: "Hey! Have you seen the latest Kihumba post?", time: "10:23 AM", type: 'text',
+    id: "1", senderId: "1", content: "Hey! Have you seen the latest Kihumba post?", time: "10:23 AM", type: 'text',
   },
   {
-    id: 2, senderId: 1, text: "", time: "10:24 AM", type: 'embedded_post',
+    id: "2", senderId: "1", content: "", time: "10:24 AM", type: 'embedded_post',
     embeddedPost: {
       type: 'kihumba_post',
       author: 'Kihumba Official',
@@ -144,10 +164,10 @@ export const dmMessages: Message[] = [
     },
   },
   {
-    id: 3, senderId: 0, text: "That's amazing! I actually just listed something on the marketplace.", time: "10:25 AM", type: 'text',
+    id: "3", senderId: "0", content: "That's amazing! I actually just listed something on the marketplace.", time: "10:25 AM", type: 'text',
   },
   {
-    id: 4, senderId: 0, text: "", time: "10:25 AM", type: 'embedded_market',
+    id: "4", senderId: "0", content: "", time: "10:25 AM", type: 'embedded_market',
     embeddedMarket: {
       type: 'market_listing',
       id: 'm1',
@@ -160,10 +180,10 @@ export const dmMessages: Message[] = [
     },
   },
   {
-    id: 5, senderId: 1, text: "Nice! Also, check out this listing I found on Kao 🏠", time: "10:26 AM", type: 'text',
+    id: "5", senderId: "1", content: "Nice! Also, check out this listing I found on Kao 🏠", time: "10:26 AM", type: 'text',
   },
   {
-    id: 6, senderId: 1, text: "", time: "10:26 AM", type: 'embedded_kao',
+    id: "6", senderId: "1", content: "", time: "10:26 AM", type: 'embedded_kao',
     embeddedKao: {
       type: 'kao_listing',
       id: '1',
@@ -176,32 +196,32 @@ export const dmMessages: Message[] = [
     },
   },
   {
-    id: 7, senderId: 0, text: "That rent is actually reasonable for Kilimani!", time: "10:27 AM", type: 'text',
-    replyTo: { id: 6, senderId: 1, text: "", time: "10:26 AM", type: 'embedded_kao', senderName: 'Elena Voss' } as Message,
+    id: "7", senderId: "0", content: "That rent is actually reasonable for Kilimani!", time: "10:27 AM", type: 'text',
+    replyTo: { id: "6", senderId: "1", content: "", time: "10:26 AM", type: 'embedded_kao', senderName: 'Elena Voss' } as Message,
   },
   {
-    id: 8, senderId: 1, text: "Right?! I might schedule a viewing through Kao. The Sacco delivery for marketplace items is genius too.", time: "10:28 AM", type: 'text',
-    replyTo: { id: 7, senderId: 0, text: "That rent is actually reasonable for Kilimani!", time: "10:27 AM", type: 'text' } as Message,
+    id: "8", senderId: "1", content: "Right?! I might schedule a viewing through Kao. The Sacco delivery for marketplace items is genius too.", time: "10:28 AM", type: 'text',
+    replyTo: { id: "7", senderId: "0", content: "That rent is actually reasonable for Kilimani!", time: "10:27 AM", type: 'text' } as Message,
   },
 ];
 
 // ─── Group Messages (Design Sync — with sender attribution + poll) ───────────
 export const groupMessages: Message[] = [
   {
-    id: 101, senderId: 10, senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
-    text: "Morning everyone! 👋 Let's sync on the new design system.", time: "9:00 AM", type: 'text',
+    id: "101", senderId: "10", senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
+    content: "Morning everyone! 👋 Let's sync on the new design system.", time: "9:00 AM", type: 'text',
   },
   {
-    id: 102, senderId: 11, senderName: 'Marcus Webb', senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', senderVerified: false,
-    text: "Dropped the Figma link in the drive. The new gold accent system looks 🔥", time: "9:05 AM", type: 'text',
+    id: "102", senderId: "11", senderName: 'Marcus Webb', senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200', senderVerified: false,
+    content: "Dropped the Figma link in the drive. The new gold accent system looks 🔥", time: "9:05 AM", type: 'text',
   },
   {
-    id: 103, senderId: 13, senderName: 'James Odhiambo', senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', senderVerified: true,
-    text: "Love it. Here's the post I made about the marketplace launch:", time: "9:10 AM", type: 'text',
+    id: "103", senderId: "13", senderName: 'James Odhiambo', senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', senderVerified: true,
+    content: "Love it. Here's the post I made about the marketplace launch:", time: "9:10 AM", type: 'text',
   },
   {
-    id: 104, senderId: 13, senderName: 'James Odhiambo', senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', senderVerified: true,
-    text: "", time: "9:11 AM", type: 'embedded_post',
+    id: "104", senderId: "13", senderName: 'James Odhiambo', senderAvatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200', senderVerified: true,
+    content: "", time: "9:11 AM", type: 'embedded_post',
     embeddedPost: {
       type: 'kihumba_post',
       author: 'James Odhiambo',
@@ -212,12 +232,12 @@ export const groupMessages: Message[] = [
     },
   },
   {
-    id: 105, senderId: 12, senderName: 'Sarah Kimani', senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', senderVerified: true,
-    text: "Okay team, quick poll — which color scheme should we go with?", time: "9:15 AM", type: 'text',
+    id: "105", senderId: "12", senderName: 'Sarah Kimani', senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', senderVerified: true,
+    content: "Okay team, quick poll — which color scheme should we go with?", time: "9:15 AM", type: 'text',
   },
   {
-    id: 106, senderId: 12, senderName: 'Sarah Kimani', senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', senderVerified: true,
-    text: "", time: "9:16 AM", type: 'poll',
+    id: "106", senderId: "12", senderName: 'Sarah Kimani', senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200', senderVerified: true,
+    content: "", time: "9:16 AM", type: 'poll',
     pollData: {
       question: 'Which accent color for the new design system?',
       options: [
@@ -230,16 +250,16 @@ export const groupMessages: Message[] = [
     },
   },
   {
-    id: 107, senderId: 0, text: "Classic Gold all the way! It's our identity 🏆", time: "9:20 AM", type: 'text',
-    replyTo: { id: 106, senderId: 12, text: "", time: "9:16 AM", type: 'poll', senderName: 'Sarah Kimani' } as Message,
+    id: "107", senderId: "0", content: "Classic Gold all the way! It's our identity 🏆", time: "9:20 AM", type: 'text',
+    replyTo: { id: "106", senderId: "12", content: "", time: "9:16 AM", type: 'poll', senderName: 'Sarah Kimani' } as Message,
   },
   {
-    id: 108, senderId: 10, senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
-    text: "Agreed. Also found us a team apartment for the retreat:", time: "9:25 AM", type: 'text',
+    id: "108", senderId: "10", senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
+    content: "Agreed. Also found us a team apartment for the retreat:", time: "9:25 AM", type: 'text',
   },
   {
-    id: 109, senderId: 10, senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
-    text: "", time: "9:25 AM", type: 'embedded_kao',
+    id: "109", senderId: "10", senderName: 'Elena Voss', senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200', senderVerified: true,
+    content: "", time: "9:25 AM", type: 'embedded_kao',
     embeddedKao: {
       type: 'kao_listing',
       id: '2',

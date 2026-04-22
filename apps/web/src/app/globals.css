@@ -1,3 +1,10 @@
+/* 
+  ANTIGRAVITY SYSTEM RULE: 
+  DO NOT USE rounded-2xl, rounded-3xl, OR FULLY ROUNDED CORNERS.
+  KIHUMBA BRAND IS INDUSTRIAL AND SHARP. 
+  USE --radius-main (6px) FOR ALL CARDS, BUTTONS, AND MODALS.
+*/
+
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
@@ -6,7 +13,11 @@
   --color-primary-gold: #c5a059;
   --color-accent-gold: #e2c27d;
   --color-gold-dark: #a07d3a;
-  --font-display: "Inter", system-ui, sans-serif;
+  --font-display: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  
+  /* PLATFORM RULES: Use --radius-main for cards/buttons. No "fully rounded" unless explicitly requested. */
+  --radius-main: 6px;
 }
 
 /* ========== THEME SYSTEM ========== */
@@ -66,11 +77,13 @@ body {
 .card-surface {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
+  border-radius: var(--radius-main);
   transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .nav-surface {
   background-color: var(--nav-bg);
+  border-radius: var(--radius-main);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   transition: background-color 0.4s ease;
@@ -99,8 +112,16 @@ body {
 }
 
 .story-ring {
-  background: conic-gradient(from 0deg, #c5a059 0%, #e2c27d 25%, #c5a059 50%, #a07d3a 75%, #c5a059 100%);
+  background: conic-gradient(from 0deg, #c5a059 0%, #e2c27d 20%, #ffffff 25%, #e2c27d 30%, #c5a059 50%, #a07d3a 75%, #c5a059 100%);
   padding: 2.5px;
+  background-size: 200% 200%;
+  animation: ring-shimmer 3s linear infinite;
+}
+
+@keyframes ring-shimmer {
+  0% { background-position: 0% 50%; filter: brightness(1); }
+  50% { background-position: 100% 50%; filter: brightness(1.2); }
+  100% { background-position: 0% 50%; filter: brightness(1); }
 }
 
 .story-ring-seen {
@@ -154,10 +175,101 @@ body {
   animation: heartPop 0.4s ease-out;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-out;
+}
+
 .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
 .stagger-children > *:nth-child(2) { animation-delay: 80ms; }
 .stagger-children > *:nth-child(3) { animation-delay: 160ms; }
 .stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+
+@keyframes flow-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-flow {
+  background-size: 200% 200%;
+  animation: flow-gradient 4s ease infinite;
+}
+
+@keyframes torch-sweep {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-torch-text {
+  background: linear-gradient(
+    110deg,
+    #D4AF37 0%,
+    #D4AF37 40%,
+    #FFFFFF 50%,
+    #D4AF37 60%,
+    #D4AF37 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: torch-sweep 6s linear infinite;
+}
+
+.animate-torch-bg {
+  background: linear-gradient(
+    110deg,
+    #D4AF37 0%,
+    #D4AF37 40%,
+    #FFFFFF 50%,
+    #D4AF37 60%,
+    #D4AF37 100%
+  );
+  background-size: 200% auto;
+  animation: torch-sweep 6s linear infinite;
+}
+
+@keyframes torch-sweep-mask {
+  0% { mask-position: -100% 0; -webkit-mask-position: -100% 0; }
+  100% { mask-position: 200% 0; -webkit-mask-position: 200% 0; }
+}
+
+.animate-torch-mask {
+  mask-image: linear-gradient(
+    110deg,
+    transparent 40%,
+    black 50%,
+    transparent 60%
+  );
+  -webkit-mask-image: linear-gradient(
+    110deg,
+    transparent 40%,
+    black 50%,
+    transparent 60%
+  );
+  mask-size: 300% 100%;
+  -webkit-mask-size: 300% 100%;
+  animation: torch-sweep-mask 6s linear infinite;
+}
+
+/* Specific targeted rule to remove outer strokes on Lucide Badge icons */
+.badge-solid path:first-child {
+  stroke: transparent;
+}
+
+.gold-glow-intense {
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.3);
+  border-color: rgba(197, 160, 89, 0.5);
+}
 
 /* ========== FOCUS ========== */
 button:focus-visible, a:focus-visible, input:focus-visible {

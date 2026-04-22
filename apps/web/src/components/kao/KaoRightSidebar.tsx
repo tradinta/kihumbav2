@@ -14,10 +14,12 @@ import {
 
 const AD_LISTINGS = [
   {
-    id: "ad-1",
-    title: "3BR Penthouse — Westlands",
-    price: "KES 85,000/mo",
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=400",
+    id: "r2",
+    title: "Premium Studio at Westlands",
+    price: 35000,
+    area: "Westlands",
+    type: "Studio",
+    image: null,
     location: "Westlands, Nairobi",
     tag: "Premium",
     views: "2.1k",
@@ -85,13 +87,19 @@ export default function KaoRightSidebar() {
           {AD_LISTINGS.map((ad) => (
             <Link key={ad.id} href={`/kao/${ad.id}`}>
               <div className="card-surface rounded-lg overflow-hidden group cursor-pointer hover:border-primary-gold/30 transition-all">
-                <div className="relative h-28 overflow-hidden">
-                  <Image
-                    src={ad.image}
-                    alt={ad.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                <div className="relative h-28 overflow-hidden bg-black/40">
+                  {ad.image ? (
+                    <Image
+                      src={ad.image}
+                      alt={ad.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700">
+                      <Building2 size={24} />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <span className="absolute top-2 left-2 bg-primary-gold/90 text-black text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">
                     {ad.tag}

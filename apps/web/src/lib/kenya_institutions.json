@@ -1,0 +1,206 @@
+{
+  "institutions": {
+    "1": {
+      "universities": ["Technical University of Mombasa (TUM)", "UoN - Mombasa Campus"],
+      "tvets": ["Mombasa Technical Training Institute", "Ahmed Shahame Mwidani TTI"]
+    },
+    "2": {
+      "universities": ["Kwale University (Proposed/Satellite)"],
+      "tvets": ["Kwale Technical and Vocational College", "Kinango TVC"]
+    },
+    "3": {
+      "universities": ["Pwani University"],
+      "tvets": ["Kilifi North TVC", "Malindi TVC", "Godoma TTI"]
+    },
+    "4": {
+      "universities": [],
+      "tvets": ["Tana River Technical and Vocational College"]
+    },
+    "5": {
+      "universities": [],
+      "tvets": ["Lamu East Technical and Vocational College", "Lamu West TVC"]
+    },
+    "6": {
+      "universities": ["Taita Taveta University"],
+      "tvets": ["Coast Institute of Technology", "Taveta TVC"]
+    },
+    "7": {
+      "universities": ["Garissa University"],
+      "tvets": ["North Eastern National Polytechnic"]
+    },
+    "8": {
+      "universities": [],
+      "tvets": ["Wajir Technical and Vocational College"]
+    },
+    "9": {
+      "universities": [],
+      "tvets": ["Mandera Technical Training Institute"]
+    },
+    "10": {
+      "universities": [],
+      "tvets": ["Marsabit Technical and Vocational College"]
+    },
+    "11": {
+      "universities": [],
+      "tvets": ["Isiolo Technical and Vocational College"]
+    },
+    "12": {
+      "universities": ["Meru University of Science and Technology (MUST)", "Kenya Methodist University (KeMU)"],
+      "tvets": ["Meru National Polytechnic", "Karumo TTI"]
+    },
+    "13": {
+      "universities": ["Chuka University"],
+      "tvets": ["Tharaka Technical and Vocational College", "Chuka TVC"]
+    },
+    "14": {
+      "universities": ["University of Embu"],
+      "tvets": ["Embu College", "Manyatta TVC"]
+    },
+    "15": {
+      "universities": ["South Eastern Kenya University (SEKU) - Main"],
+      "tvets": ["Kitui North TVC", "Mutomo TVC"]
+    },
+    "16": {
+      "universities": ["Machakos University", "Daystar University (Athi River)"],
+      "tvets": ["Machakos National Polytechnic", "Matuu TTI"]
+    },
+    "17": {
+      "universities": ["South Eastern Kenya University (SEKU) - Wote Campus"],
+      "tvets": ["Makueni Agricultural TTI", "Wote TTI"]
+    },
+    "18": {
+      "universities": [],
+      "tvets": ["Nyandarua National Polytechnic", "Ol'Kalou TVC"]
+    },
+    "19": {
+      "universities": ["Dedan Kimathi University of Technology (DeKUT)", "Karatina University"],
+      "tvets": ["Nyeri National Polytechnic", "Othaya TTI", "Mathira TVC"]
+    },
+    "20": {
+      "universities": ["Kirinyaga University"],
+      "tvets": ["Sagana Technical Training Institute"]
+    },
+    "21": {
+      "universities": ["Murang'a University of Technology"],
+      "tvets": ["Michuki Technical Training Institute", "Mathioya TVC"]
+    },
+    "22": {
+      "universities": ["Kenyatta University (KU)", "JKUAT", "Zetech University", "Mount Kenya University (MKU)"],
+      "tvets": ["Kiambu Institute of Science and Technology (KIST)", "Thika TTI", "PC Kinyanjui TTI"]
+    },
+    "23": {
+      "universities": ["Turkana University College"],
+      "tvets": ["Lodwar Technical and Vocational College"]
+    },
+    "24": {
+      "universities": [],
+      "tvets": ["Kapenguria Technical and Vocational College"]
+    },
+    "25": {
+      "universities": [],
+      "tvets": ["Samburu West Technical and Vocational College"]
+    },
+    "26": {
+      "universities": [],
+      "tvets": ["Kitale National Polytechnic"]
+    },
+    "27": {
+      "universities": ["Moi University", "University of Eldoret"],
+      "tvets": ["The Eldoret National Polytechnic", "Rift Valley Technical Training Institute (RVTTI)"]
+    },
+    "28": {
+      "universities": [],
+      "tvets": ["Iten Technical and Vocational College"]
+    },
+    "29": {
+      "universities": ["Koitalel Samoei University College"],
+      "tvets": ["Kapsabet Technical and Vocational College", "Aldai TTI"]
+    },
+    "30": {
+      "universities": [],
+      "tvets": ["Baringo Technical College", "Eldama Ravine TVC"]
+    },
+    "31": {
+      "universities": ["Laikipia University"],
+      "tvets": ["Laikipia East TVC", "Rumuruti TVC"]
+    },
+    "32": {
+      "universities": ["Egerton University", "Kabarak University"],
+      "tvets": ["Rift Valley Institute of Science and Technology (RVIST)"]
+    },
+    "33": {
+      "universities": ["Maasai Mara University"],
+      "tvets": ["Narok West TVC"]
+    },
+    "34": {
+      "universities": ["Multimedia University of Kenya", "KAG East University"],
+      "tvets": ["Masai Technical Training Institute"]
+    },
+    "35": {
+      "universities": ["University of Kabianga"],
+      "tvets": ["Kericho TTI", "Bureti TTI"]
+    },
+    "36": {
+      "universities": ["Bomet University College"],
+      "tvets": ["Bomet Central TVC", "Sotik TTI"]
+    },
+    "37": {
+      "universities": ["Masinde Muliro University of Science and Technology (MMUST)"],
+      "tvets": ["Sigalagala National Polytechnic", "Kakamega TVC"]
+    },
+    "38": {
+      "universities": ["Kaimosi Friends University (KAFU)"],
+      "tvets": ["Friends College Kaimosi"]
+    },
+    "39": {
+      "universities": ["Kibabii University"],
+      "tvets": ["Sang'alo Institute of Science and Technology", "Matili TTI"]
+    },
+    "40": {
+      "universities": ["Alupe University"],
+      "tvets": ["Busia Technical and Vocational College", "Bumbe TTI"]
+    },
+    "41": {
+      "universities": ["Jaramogi Oginga Odinga University of Science and Technology (JOOUST)"],
+      "tvets": ["Siaya Institute of Technology"]
+    },
+    "42": {
+      "universities": ["Maseno University", "Great Lakes University"],
+      "tvets": ["Kisumu National Polytechnic", "Ramogi Institute of Advanced Technology (RIAT)"]
+    },
+    "43": {
+      "universities": ["Tom Mboya University"],
+      "tvets": ["Mawego Technical Training Institute"]
+    },
+    "44": {
+      "universities": ["Rongo University"],
+      "tvets": ["Migori TVC"]
+    },
+    "45": {
+      "universities": ["Kisii University"],
+      "tvets": ["Gusii Institute of Technology", "Keroka TTI"]
+    },
+    "46": {
+      "universities": [],
+      "tvets": ["Nyamira North TVC", "Ekerenyo TTI"]
+    },
+    "47": {
+      "universities": [
+        "University of Nairobi (UoN)",
+        "Kenyatta University (KU)",
+        "Strathmore University",
+        "United States International University (USIU)",
+        "Daystar University",
+        "Technical University of Kenya (TUK)",
+        "Pan Africa Christian (PAC) University",
+        "Catholic University of Eastern Africa (CUEA)"
+      ],
+      "tvets": [
+        "Nairobi Technical Training Institute",
+        "PC Kinyanjui Technical Training Institute",
+        "Kabete National Polytechnic",
+        "Kenya Industrial Training Institute (KITI)"
+      ]
+    }
+  }
+}

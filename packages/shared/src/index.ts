@@ -118,3 +118,8 @@ export interface OnboardingDto {
   gender: Gender;
   county: string;
 }
+
+// ─── Clients ──────────────────────────────────────────────────────────────────
+
+export * from './api-client';
+export * from './auth-client';

@@ -5,13 +5,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { MapPin, Home, Search, Bed } from 'lucide-react';
-import type { ProfileProperty } from '@/data/profileData';
+import useSWR from 'swr';
+import { api } from '@/lib/api';
 
 interface Props {
-  properties: ProfileProperty[];
+  user: any;
 }
 
-export default function ProfileKao({ properties }: Props) {
+export default function ProfileKao({ user }: Props) {
+  const { data: properties = [], error, isLoading } = useSWR(`/kao/listings?authorId=${user.id}`, async (url) => {
+    return api.get(url);
+  });
+
+  if (isLoading) return <div className="p-4 text-center text-xs text-muted-custom">Loading properties...</div>;
+  if (error) return <div className="p-4 text-center text-xs text-red-500">Failed to load properties</div>;
   return (
     <div className="px-4 space-y-6">
       {/* Listed Properties */}
@@ -24,7 +31,7 @@ export default function ProfileKao({ properties }: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {properties.map((prop, i) => (
+            {properties.map((prop: any, i: number) => (
               <Link key={prop.id} href={`/kao/${prop.id}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -32,10 +39,16 @@ export default function ProfileKao({ properties }: Props) {
                   transition={{ delay: i * 0.08 }}
                   className="card-surface rounded-lg overflow-hidden group hover:border-primary-gold/30 transition-all cursor-pointer"
                 >
-                  <div className="relative h-32 overflow-hidden">
-                    <Image src={prop.image} alt={prop.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="relative h-32 overflow-hidden bg-black/40">
+                    {prop.images?.[0] ? (
+                      <img src={prop.images[0]} alt={prop.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                        <Home size={20} />
+                      </div>
+                    )}
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2.5 pt-8">
-                      <span className="text-[10px] font-bold text-primary-gold">KES {prop.price.toLocaleString()}/mo</span>
+                      <span className="text-[10px] font-bold text-primary-gold">KES {prop.price?.toLocaleString()}/mo</span>
                     </div>
                   </div>
                   <div className="p-2.5">
@@ -45,7 +58,7 @@ export default function ProfileKao({ properties }: Props) {
                         <MapPin size={8} className="text-primary-gold/50" /> {prop.area}, {prop.county}
                       </span>
                       <span className="flex items-center gap-1 text-[8px] text-muted-custom">
-                        <Bed size={8} className="text-primary-gold/50" /> {prop.bedrooms}
+                        <Bed size={8} className="text-primary-gold/50" /> {prop.type?.replace('_', ' ')}
                       </span>
                     </div>
                   </div>

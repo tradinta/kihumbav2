@@ -6,7 +6,8 @@ import { FileText, Users, UserCheck, Zap } from 'lucide-react';
 import type { ProfileUser } from '@/data/profileData';
 
 interface Props {
-  user: ProfileUser;
+  user: any;
+  onOpenSocials?: (tab: 'followers' | 'following') => void;
 }
 
 function AnimatedCounter({ target, suffix = '' }: { target: number | string; suffix?: string }) {
@@ -57,7 +58,7 @@ function ScoreArc({ score }: { score: number }) {
   );
 }
 
-export default function ProfileStats({ user }: Props) {
+export default function ProfileStats({ user, onOpenSocials }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -68,12 +69,24 @@ export default function ProfileStats({ user }: Props) {
       <div className="card-surface rounded-lg p-4 flex items-center justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           {[
-            { label: 'Posts', value: user.stats.posts, icon: FileText },
-            { label: 'Followers', value: user.stats.followers, icon: Users },
-            { label: 'Following', value: user.stats.following, icon: UserCheck },
-            { label: 'Deals', value: user.stats.deals, icon: Zap },
+            { label: 'Posts', value: user._count?.posts ?? 0, icon: FileText },
+            { label: 'Followers', value: user._count?.followers ?? 0, icon: Users, id: 'followers' },
+            { label: 'Following', value: user._count?.following ?? 0, icon: UserCheck, id: 'following' },
+            { label: 'Deals', value: user.sellerProfile?.completedDeals ?? 0, icon: Zap },
           ].map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center text-center">
+            <div 
+              key={stat.label} 
+              onClick={() => {
+                if ((stat.id === 'followers' || stat.id === 'following') && onOpenSocials) {
+                  onOpenSocials(stat.id);
+                }
+              }}
+              className={`flex flex-col items-center text-center ${
+                stat.id === 'followers' || stat.id === 'following' 
+                  ? 'cursor-pointer hover:opacity-80 hover:text-primary-gold transition-all' 
+                  : ''
+              }`}
+            >
               <stat.icon size={12} className="text-primary-gold/40 mb-1" />
               <span className="text-sm font-bold"><AnimatedCounter target={stat.value} /></span>
               <span className="text-[8px] font-bold uppercase tracking-widest text-muted-custom">{stat.label}</span>
@@ -83,7 +96,7 @@ export default function ProfileStats({ user }: Props) {
 
         {/* Kihumba Score Arc */}
         <div className="hidden sm:block">
-          <ScoreArc score={user.kihumbaScore} />
+          <ScoreArc score={user.partnerProfile?.kts || 80} />
         </div>
       </div>
     </motion.div>

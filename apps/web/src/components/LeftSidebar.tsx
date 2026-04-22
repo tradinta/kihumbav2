@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme, type Theme } from "@/context/ThemeContext";
+import { usePostContext } from "@/context/PostContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
@@ -8,29 +9,34 @@ import {
   Store,
   ShoppingBag,
   MessageCircle,
-  Crown,
-  Megaphone,
-  Briefcase,
-  FileEdit,
   Bookmark,
   Star,
+  Users,
+  Megaphone,
+  FilePenLine,
+  Cog,
+  Sparkles,
+  Calendar,
 } from "lucide-react";
 
 const navItems = [
   { id: "home", icon: Building2, label: "Home", href: "/" },
   { id: "kao", icon: Store, label: "Kao", href: "/kao" },
   { id: "marketplace", icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
+  { id: "events", icon: Calendar, label: "Events", href: "/events" },
+  { id: "tribes", icon: Users, label: "Tribes", href: "/tribes" },
   { id: "messages", icon: MessageCircle, label: "Messages", href: "/messages" },
+  { id: "settings", icon: Cog, label: "Settings", href: "/settings" },
 ];
 
 const growthItems = [
-  { id: "premium", icon: Crown, label: "Premium", href: "/premium" },
   { id: "business", icon: Megaphone, label: "Business Suite", href: "/business" },
   { id: "studio", icon: Star, label: "Creator Studio", href: "/studio" },
+  { id: "plus", icon: Sparkles, label: "Kihumba +", href: "/plus" },
 ];
 
 const vaultItems = [
-  { id: "drafts", icon: FileEdit, label: "Drafts" },
+  { id: "drafts", icon: FilePenLine, label: "Drafts" },
   { id: "bookmarks", icon: Bookmark, label: "Bookmarks" },
 ];
 
@@ -46,6 +52,7 @@ interface LeftSidebarProps {
 
 export default function LeftSidebar({ collapsed = false }: LeftSidebarProps) {
   const { theme, setTheme } = useTheme();
+  const { setCreatePostOpen } = usePostContext();
   const pathname = usePathname();
 
   // ── Collapsed (icon-only) mode for Messages ──
@@ -116,7 +123,7 @@ export default function LeftSidebar({ collapsed = false }: LeftSidebarProps) {
 
       <div className="mb-8">
         <h2 className="px-4 text-[9px] font-bold uppercase tracking-[0.3em] text-primary-gold/60 mb-3">
-          Growth Suite
+          Grown Suite
         </h2>
         <nav className="space-y-1">
           {growthItems.map((item) => {
@@ -171,7 +178,10 @@ export default function LeftSidebar({ collapsed = false }: LeftSidebarProps) {
             />
           ))}
         </div>
-        <button className="w-full bg-primary-gold text-black py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded shadow-lg shadow-primary-gold/10 active:scale-[0.98]">
+        <button 
+          onClick={() => setCreatePostOpen(true)}
+          className="w-full bg-primary-gold text-black py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded shadow-lg shadow-primary-gold/10 active:scale-[0.98]"
+        >
           Curate
         </button>
       </div>
