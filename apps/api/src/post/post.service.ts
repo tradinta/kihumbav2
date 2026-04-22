@@ -28,6 +28,7 @@ const POST_SELECT = (userId?: string) => ({
             institution: true,
             accountType: true,
             isReserved: true,
+            subscriptionTier: true,
         },
     },
     _count: {
@@ -301,7 +302,7 @@ export class PostService {
             orderBy,
             include: {
                 author: {
-                    select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
+                    select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true, subscriptionTier: true },
                 },
                 tribe: {
                     select: { id: true, name: true, slug: true },
@@ -312,21 +313,21 @@ export class PostService {
                 marketListing: {
                     include: {
                         seller: {
-                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
+                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true, subscriptionTier: true },
                         },
                     }
                 },
                 kaoListing: {
                     include: {
                         author: {
-                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
+                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true, subscriptionTier: true },
                         },
                     }
                 },
                 originalPost: {
                     include: {
                         author: {
-                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
+                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true, subscriptionTier: true },
                         },
                         event: true,
                         poll: {
