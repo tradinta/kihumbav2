@@ -142,7 +142,7 @@ const authOptions = {
         }
     },
     appName: 'Kihumba',
-    basePath: '/api/auth',
+    basePath: '/auth',
     baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3001',
     secret: process.env.BETTER_AUTH_SECRET || 'kihumba-dev-secret-change-before-deploy-32chars!!',
 
