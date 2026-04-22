@@ -16,3 +16,7 @@ pnpm-debug.log*
 .pnpm-store
 .vercel/
 *.tsbuildinfo
+prod.env
+*.env
+.env*
+! .env.template
