@@ -26,16 +26,9 @@ export class PrismaService extends PrismaClient
     implements OnModuleInit, OnModuleDestroy {
 
     constructor() {
-        const connectionString = getCleanDatabaseUrl();
-        
-        // If connecting to Neon, run Prisma over WebSockets to bypass TCP 5432 blocks
-        if (connectionString.includes('neon.tech')) {
-            const adapter = new PrismaNeon({ connectionString: connectionString });
-            super({ adapter, log: ['error', 'warn'] });
-        } else {
-            // Fallback for local/standard DBs
-            super();
-        }
+        super({
+            log: ['error', 'warn'],
+        });
     }
 
     async onModuleInit() {
