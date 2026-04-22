@@ -281,8 +281,8 @@ const authOptions = {
             domain: process.env.COOKIE_DOMAIN || undefined,
         },
         defaultCookieAttributes: {
-            sameSite: "lax" as const,
-            secure: process.env.NODE_ENV === 'production',
+            sameSite: "none" as const,
+            secure: true,
         }
     },
     // Fix: Properly typed logger or simple level string
