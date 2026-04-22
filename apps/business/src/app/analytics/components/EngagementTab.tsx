@@ -103,7 +103,7 @@ export default function EngagementTab() {
                        type="category" 
                        axisLine={false} 
                        tickLine={false} 
-                       tick={{ fill: '#fff', fontSize: 10, fontWeight: 900, textTransform: 'uppercase' }} 
+                       tick={{ fill: '#fff', fontSize: 10, fontWeight: 900 }} 
                        width={80}
                     />
                     <Tooltip 

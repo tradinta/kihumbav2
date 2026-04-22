@@ -9,7 +9,8 @@ import {
   CheckCircle2,
   AlertCircle,
   BarChart3,
-  ExternalLink
+  ExternalLink,
+  Plus
 } from "lucide-react";
 
 const ACTIVE_FLEETS = [

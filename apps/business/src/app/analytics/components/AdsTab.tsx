@@ -47,7 +47,7 @@ export default function AdsTab() {
                      dataKey="name" 
                      axisLine={false} 
                      tickLine={false} 
-                     tick={{ fill: '#666', fontSize: 10, fontWeight: 900, textTransform: 'uppercase' }} 
+                     tick={{ fill: '#666', fontSize: 10, fontWeight: 900 }} 
                      dy={10}
                   />
                   <YAxis 

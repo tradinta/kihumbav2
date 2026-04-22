@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ImageIcon, Film, Layout, Monitor, Type, LayoutGrid, Users, Search, UserCircle, ChevronDown, Check } from "lucide-react";
 
-export const FORMAT_DATA: Record<string, { name: string; desc: string; icon: any; specs: string }> = {
+export const FORMAT_DATA: Record<string, { name: string; desc: string; icon: any; specs: string; pricing?: string }> = {
   "image": { name: "Static Image", desc: "Standard 1:1 or 4:5 visual.", icon: ImageIcon, specs: "Max 5MB • JPG/PNG • 1080x1080px recommended" },
   "carousel": { name: "Carousel", desc: "Multiple sliding cards (up to 5).", icon: Layout, pricing: "CPM", specs: "Max 3MB per card • 1:1 Aspect Ratio" },
   "video": { name: "Video (Horizontal)", desc: "Standard 16:9 cinematic video.", icon: Film, specs: "Max 50MB • MP4/MOV • 15s Max" },
