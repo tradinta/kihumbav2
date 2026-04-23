@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Megaphone,
-  Calendar,
+
   ShoppingBag,
   Sparkles,
   Wallet,
@@ -259,19 +259,7 @@ export default function BusinessHub() {
               active
               onClick={() => router.push("/ads")}
             />
-            <ServiceCard
-              title="Events Console"
-              desc="Manage ticketing, gate scanning, attendee tracking"
-              icon={<Calendar size={22} />}
-              color="bg-blue-500/10 text-blue-500 border-blue-500/20"
-              stats={[
-                { label: "Upcoming", value: "2" },
-                { label: "Sold", value: "2,090" },
-                { label: "Volume", value: "KES 6.4M" },
-              ]}
-              active
-              onClick={() => router.push("/events")}
-            />
+
             <ServiceCard
               title="Marketplace Ops"
               desc="Inventory, orders, escrow, logistics coordination"

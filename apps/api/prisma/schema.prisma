@@ -22,7 +22,6 @@ enum ContentType {
   VIDEO
   RESHARE
   QUOTE
-  EVENT
   POLL
   DOCUMENT
 }
@@ -543,7 +542,6 @@ model Post {
   kaoListing   KaoListing? @relation(fields: [kaoListingId], references: [id], onDelete: SetNull)
 
   // Expanded Curation
-  event        Event?
   poll         Poll?
 
   createdAt DateTime @default(now())
@@ -1232,31 +1230,6 @@ model ChatMessage {
   @@index([roomId])
   @@index([senderId])
   @@index([createdAt(sort: Desc)])
-}
-
-// ─── Event ────────────────────────────────────────────────────────────────────
-model Event {
-  id          String   @id @default(uuid())
-  postId      String   @unique
-  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  title       String
-  organizer   String
-  date        DateTime
-  endDate     DateTime?
-  venue       String
-  price       String?          // "Free" or "KES 3,500"
-  externalLink String?
-  description String?
-  posterUrl   String?          // Event poster image (R2 URL)
-  isVerified  Boolean @default(false) // Only sellers.kihumba.com gets true
-  isActive    Boolean @default(true)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([date])
-  @@index([isVerified])
 }
 
 // ─── Poll ─────────────────────────────────────────────────────────────────────

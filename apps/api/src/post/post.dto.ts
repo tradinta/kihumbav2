@@ -7,7 +7,6 @@ export enum ContentTypeEnum {
     VIDEO = 'VIDEO',
     RESHARE = 'RESHARE',
     QUOTE = 'QUOTE',
-    EVENT = 'EVENT',
     POLL = 'POLL',
     DOCUMENT = 'DOCUMENT',
 }
@@ -34,39 +33,7 @@ export class MediaItemDto {
     alt?: string;
 }
 
-export class EventDataDto {
-    @IsString()
-    title: string;
 
-    @IsString()
-    organizer: string;
-
-    @IsString()
-    date: string; // ISO String
-
-    @IsOptional()
-    @IsString()
-    endDate?: string;
-
-    @IsString()
-    venue: string;
-
-    @IsOptional()
-    @IsString()
-    price?: string;
-
-    @IsOptional()
-    @IsString()
-    externalLink?: string;
-
-    @IsOptional()
-    @IsString()
-    description?: string;
-
-    @IsOptional()
-    @IsString()
-    posterUrl?: string;
-}
 
 export class PollDataDto {
     @IsString()
@@ -107,10 +74,7 @@ export class CreatePostDto {
     @IsEnum(ContentTypeEnum)
     contentType?: ContentTypeEnum;
 
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => EventDataDto)
-    eventData?: EventDataDto;
+
 
     @IsOptional()
     @ValidateNested()

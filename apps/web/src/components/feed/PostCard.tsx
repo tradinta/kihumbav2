@@ -67,19 +67,7 @@ export interface PostData {
       duration: number;
       thumbnailUrl?: string;
   };
-  event?: {
-      id: string;
-      title: string;
-      organizer: string;
-      date: string;
-      endDate?: string;
-      venue: string;
-      price: string;
-      externalLink?: string;
-      description?: string;
-      posterUrl?: string;
-      isVerified: boolean;
-  };
+
   poll?: {
       id: string;
       question: string;
@@ -636,63 +624,7 @@ export default function PostCard({ post, index = 0, isEmbedded = false, layout =
           </div>
         )}
 
-        {/* Event Card Rendering */}
-        {displayPost.event && (
-          <div className="px-4 pb-4 relative z-20">
-            <div className="relative rounded-2xl border border-primary-gold/20 bg-white/[0.03] overflow-hidden group/event shadow-2xl transition-all hover:border-primary-gold/40">
-              <div className="aspect-[21/9] w-full relative overflow-hidden">
-                <img 
-                  src={displayPost.event.posterUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80"} 
-                  className="w-full h-full object-cover group-hover/event:scale-105 transition-transform duration-1000"
-                  alt=""
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                {displayPost.event.isVerified && (
-                  <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-primary-gold text-black text-[8px] font-black uppercase tracking-widest flex items-center gap-1 shadow-lg">
-                    <ShieldCheck size={10} /> Verified
-                  </div>
-                )}
-                <div className="absolute bottom-3 left-4">
-                   <div className="text-[10px] font-black text-primary-gold uppercase tracking-[0.3em] mb-1">Coming Up</div>
-                   <h4 className="text-lg font-black text-white uppercase tracking-tight leading-none">{displayPost.event.title}</h4>
-                </div>
-              </div>
-              <div className="p-4 bg-black/40 backdrop-blur-md border-t border-white/5">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                   <div className="space-y-1">
-                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Date & Time</span>
-                      <p className="text-[10px] font-bold text-white uppercase">{new Date(displayPost.event.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</p>
-                   </div>
-                   <div className="space-y-1">
-                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Venue</span>
-                      <p className="text-[10px] font-bold text-white uppercase truncate">{displayPost.event.venue}</p>
-                   </div>
-                   <div className="space-y-1">
-                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Organizer</span>
-                      <p className="text-[10px] font-bold text-primary-gold uppercase">@{displayPost.event.organizer}</p>
-                   </div>
-                   <div className="space-y-1">
-                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Entry</span>
-                      <p className="text-[10px] font-bold text-white uppercase">{displayPost.event.price}</p>
-                   </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Link 
-                    href={displayPost.event.isVerified ? `/events/${displayPost.event.id}` : (displayPost.event.externalLink || '#')}
-                    target={displayPost.event.isVerified ? "_self" : "_blank"}
-                    className="flex-1 h-10 rounded-xl bg-primary-gold text-black text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary-gold/10"
-                  >
-                    {displayPost.event.isVerified ? "Get Tickets" : "Learn More"} <ExternalLink size={12} />
-                  </Link>
-                  <button className="h-10 px-4 rounded-xl border border-white/10 text-white hover:bg-white/5 transition-all">
-                    <Repeat2 size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+
 
         {/* Poll Rendering */}
         {localPoll && (() => {

@@ -16,14 +16,12 @@ import {
   FilePenLine,
   Cog,
   Sparkles,
-  Calendar,
 } from "lucide-react";
 
 const navItems = [
   { id: "home", icon: Building2, label: "Home", href: "/" },
   { id: "kao", icon: Store, label: "Kao", href: "/kao" },
   { id: "marketplace", icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
-  { id: "events", icon: Calendar, label: "Events", href: "/events" },
   { id: "tribes", icon: Users, label: "Tribes", href: "/tribes" },
   { id: "messages", icon: MessageCircle, label: "Messages", href: "/messages" },
   { id: "settings", icon: Cog, label: "Settings", href: "/settings" },

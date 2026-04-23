@@ -92,7 +92,7 @@ export class PostService {
             }
         }
 
-        // 2. Transactional Creation for EVENT and POLL
+        // 2. Transactional Creation for POLL
         const postId = await this.prisma.$transaction(async (tx) => {
             const post = await tx.post.create({
                 data: {
@@ -114,25 +114,6 @@ export class PostService {
                 if (author?.privateAccount && tribe?.privacy === 'PUBLIC') {
                     throw new ForbiddenException('Private accounts cannot participate in public Tribes.');
                 }
-            }
-
-            // Handle Event Data
-            if (derivedContentType === 'EVENT' && dto.eventData) {
-                await tx.event.create({
-                    data: {
-                        postId: post.id,
-                        title: dto.eventData.title,
-                        organizer: dto.eventData.organizer,
-                        date: new Date(dto.eventData.date),
-                        endDate: dto.eventData.endDate ? new Date(dto.eventData.endDate) : null,
-                        venue: dto.eventData.venue,
-                        price: dto.eventData.price,
-                        externalLink: dto.eventData.externalLink,
-                        description: dto.eventData.description,
-                        posterUrl: dto.eventData.posterUrl,
-                        isVerified: false, // Default to false, verified by sellers.kihumba logic later
-                    }
-                });
             }
 
             // Handle Poll Data
@@ -168,7 +149,6 @@ export class PostService {
                     select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
                 },
                 tribe: true,
-                event: true,
                 poll: {
                     include: {
                         options: { orderBy: { sortOrder: 'asc' } },
@@ -181,7 +161,6 @@ export class PostService {
                         author: {
                             select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
                         },
-                        event: true,
                         poll: {
                             include: {
                                 options: { orderBy: { sortOrder: 'asc' } },
@@ -206,7 +185,7 @@ export class PostService {
 
     // ─── Get Feed (cursor pagination) ─────────────────────────────────────────
 
-    async getFeed(requesterId?: string, cursor?: string, limit = 20, tab: 'HOME' | 'SPARK' | 'VIDEO' | 'EVENT' = 'HOME', sort: 'LATEST' | 'RECOMMENDED' = 'LATEST', query?: string) {
+    async getFeed(requesterId?: string, cursor?: string, limit = 20, tab: 'HOME' | 'SPARK' | 'VIDEO' = 'HOME', sort: 'LATEST' | 'RECOMMENDED' = 'LATEST', query?: string) {
         const { blockedIds, mutedIds, followingIds, friendIds } = requesterId
             ? await this.getSocialFilters(requesterId)
             : { blockedIds: [], mutedIds: [], followingIds: [], friendIds: [] };
@@ -240,8 +219,6 @@ export class PostService {
         } else if (tab === 'VIDEO') {
             where.contentType = 'VIDEO';
             where.video = { isSpark: false, visibility: 'PUBLIC' };
-        } else if (tab === 'EVENT') {
-            where.contentType = 'EVENT';
         } else {
             // HOME - Weighted visibility + Industrial Visibility Guardrail
             const homeFilters = [
@@ -329,7 +306,7 @@ export class PostService {
                         author: {
                             select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true, subscriptionTier: true },
                         },
-                        event: true,
+
                         poll: {
                             include: {
                                 options: { 
@@ -341,7 +318,7 @@ export class PostService {
                         },
                     }
                 },
-                event: true,
+
                 poll: {
                     include: {
                         options: { 
@@ -450,24 +427,6 @@ export class PostService {
                         },
                     }
                 },
-                video: {
-                    select: { id: true, title: true, isSpark: true, duration: true, playbackId: true, thumbnailUrl: true }
-                },
-                marketListing: {
-                    include: {
-                        seller: {
-                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
-                        },
-                    }
-                },
-                kaoListing: {
-                    include: {
-                        author: {
-                            select: { id: true, username: true, fullName: true, avatar: true, isVerified: true, countyId: true, subCounty: true, institution: true, accountType: true, isReserved: true },
-                        },
-                    }
-                },
-                event: true,
                 poll: {
                     include: {
                         options: { 
@@ -840,7 +799,6 @@ export class PostService {
                     }
                 },
                 _count: { select: { comments: true, reshares: true, interactions: { where: { type: 'UPVOTE' } } } },
-                event: true,
                 poll: {
                     include: {
                         options: { 
@@ -1009,7 +967,6 @@ export class PostService {
                         reshares: true 
                     },
                 },
-                event: true,
                 poll: {
                     include: {
                         options: { 

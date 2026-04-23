@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Megaphone, 
-  Calendar, 
   ShoppingBag, 
   Sparkles, 
   Wallet,
@@ -120,13 +119,7 @@ export default function AdCentreDashboard() {
               color="text-emerald-500"
               onClick={() => router.push("/ads/marketplace")}
             />
-            <CategoryCard 
-              title="Events Ads" 
-              desc="Featured events & Post-purchase upsells"
-              icon={<Calendar size={24} />}
-              color="text-amber-500"
-              onClick={() => router.push("/ads/events")}
-            />
+
           </div>
         </div>
       </section>
@@ -243,13 +236,7 @@ export default function AdCentreDashboard() {
                                     <option>Store Spotlight</option>
                                  </>
                               )}
-                              {selectedCategory === "Events" && (
-                                 <>
-                                    <option>Featured Event</option>
-                                    <option>Category Banner</option>
-                                    <option>Sponsor Badge</option>
-                                 </>
-                              )}
+
                            </select>
                         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Image as ImageIcon, Video, Send, Loader2, Globe, Sparkles, Film, AlertCircle, Calendar, BarChart, FileText, Plus, Minus, Info } from "lucide-react";
+import { X, Image as ImageIcon, Video, Send, Loader2, Globe, Sparkles, Film, AlertCircle, BarChart, FileText, Plus, Minus, Info } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePostContext } from "@/context/PostContext";
 import { useAuth } from "@/context/AuthContext";
@@ -45,18 +45,9 @@ export default function CreatePostModal() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTool, setActiveTool] = useState<'POST' | 'VIDEO' | 'SUBTITLES' | 'THUMBNAIL' | 'EVENT' | 'POLL' | 'DOCUMENT'>('POST');
+  const [activeTool, setActiveTool] = useState<'POST' | 'VIDEO' | 'SUBTITLES' | 'THUMBNAIL' | 'POLL' | 'DOCUMENT'>('POST');
 
-  // Event State
-  const [eventData, setEventData] = useState({
-      name: "",
-      organizer: "",
-      date: "",
-      venue: "",
-      price: "",
-      link: "",
-      description: ""
-  });
+
 
   // Poll State
   const [pollData, setPollData] = useState({
@@ -101,7 +92,6 @@ export default function CreatePostModal() {
     setVideoFile(null);
     setVideoPreview(null);
     setMediaItems([]);
-    setEventData({ name: "", organizer: "", date: "", venue: "", price: "", link: "", description: "" });
     setPollData({ question: "", options: ["", ""], isQuiz: false, correctIndices: [], endsAt: "", allowMultiple: false });
     setDocuments([]);
     setManualThumbnail(null);
@@ -267,19 +257,7 @@ export default function CreatePostModal() {
         if (tribeTarget) payload.tribeId = tribeTarget.id;
 
         // 🚀 Curation Tools Integration
-        if (activeTool === 'EVENT') {
-            payload.contentType = 'EVENT';
-            payload.eventData = {
-                title: eventData.name,
-                organizer: eventData.organizer,
-                date: eventData.date,
-                venue: eventData.venue,
-                price: eventData.price,
-                externalLink: eventData.link,
-                description: eventData.description,
-                posterUrl: mediaItems[0]?.src // Use first image as poster
-            };
-        } else if (activeTool === 'POLL') {
+        if (activeTool === 'POLL') {
             payload.contentType = 'POLL';
             payload.pollData = {
                 question: pollData.question || content,
@@ -593,77 +571,7 @@ export default function CreatePostModal() {
                     </motion.div>
                 )}
 
-                {activeTool === 'EVENT' && (
-                    <motion.div 
-                        key="tool-event"
-                        initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    >
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Event Name</label>
-                            <input 
-                                placeholder="e.g. DJ Joe Mfalme Live"
-                                value={eventData.name}
-                                onChange={(e) => setEventData({...eventData, name: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Organizer</label>
-                            <input 
-                                placeholder="Who's hosting?"
-                                value={eventData.organizer}
-                                onChange={(e) => setEventData({...eventData, organizer: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Date & Time</label>
-                            <input 
-                                type="datetime-local"
-                                value={eventData.date}
-                                onChange={(e) => setEventData({...eventData, date: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Venue</label>
-                            <input 
-                                placeholder="Location or Link"
-                                value={eventData.venue}
-                                onChange={(e) => setEventData({...eventData, venue: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Price / Ticket</label>
-                            <input 
-                                placeholder="e.g. Free or KES 2,000"
-                                value={eventData.price}
-                                onChange={(e) => setEventData({...eventData, price: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">External Link</label>
-                            <input 
-                                placeholder="https://ticketmaster.com/..."
-                                value={eventData.link}
-                                onChange={(e) => setEventData({...eventData, link: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none"
-                            />
-                        </div>
-                        <div className="md:col-span-2 space-y-1">
-                            <label className="text-[10px] font-black text-primary-gold/60 uppercase tracking-widest ml-1">Brief Description</label>
-                            <textarea 
-                                placeholder="What's happening?"
-                                value={eventData.description}
-                                onChange={(e) => setEventData({...eventData, description: e.target.value})}
-                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-sm text-white outline-none h-24 resize-none"
-                            />
-                        </div>
-                    </motion.div>
-                )}
+
 
                 {activeTool === 'POLL' && (
                     <motion.div 
@@ -892,12 +800,7 @@ export default function CreatePostModal() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setActiveTool(activeTool === 'EVENT' ? 'POST' : 'EVENT')}
-                className={`size-10 rounded-xl flex items-center justify-center transition-all border active:scale-95 ${activeTool === 'EVENT' ? 'bg-primary-gold text-black border-primary-gold' : 'text-primary-gold border-primary-gold/20 hover:bg-primary-gold/10'}`}
-              >
-                <Calendar size={20} />
-              </button>
+
               <button 
                 onClick={() => setActiveTool(activeTool === 'POLL' ? 'POST' : 'POLL')}
                 className={`size-10 rounded-xl flex items-center justify-center transition-all border active:scale-95 ${activeTool === 'POLL' ? 'bg-primary-gold text-black border-primary-gold' : 'text-primary-gold border-primary-gold/20 hover:bg-primary-gold/10'}`}
@@ -924,7 +827,7 @@ export default function CreatePostModal() {
                 disabled={isSubmitting || (
                     (activeTool === 'POST' && !content.trim() && !mediaItems.length && !quoteTarget) ||
                     (activeTool === 'VIDEO' && !videoFile) ||
-                    (activeTool === 'EVENT' && (!eventData.name || !eventData.date || !eventData.venue)) ||
+
                     (activeTool === 'POLL' && (!pollData.question.trim() || pollData.options.some(o => !o.trim()))) ||
                     (activeTool === 'DOCUMENT' && !documents.length)
                 )}

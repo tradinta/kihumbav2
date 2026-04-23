@@ -36,7 +36,7 @@ export class PostController {
         @Req() req: any,
         @Query('cursor') cursor?: string,
         @Query('limit') limit?: number,
-        @Query('tab') tab: 'HOME' | 'SPARK' | 'VIDEO' | 'EVENT' = 'HOME',
+        @Query('tab') tab: 'HOME' | 'SPARK' | 'VIDEO' = 'HOME',
         @Query('sort') sort: 'LATEST' | 'RECOMMENDED' = 'LATEST',
         @Query('q') query?: string,
     ) {
