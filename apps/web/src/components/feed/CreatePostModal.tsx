@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Image as ImageIcon, Video, Send, Loader2, Globe, Sparkles, Film, AlertCircle, BarChart, FileText, Plus, Minus, Info } from "lucide-react";
+import { X, Image as ImageIcon, Video, Send, Loader2, Globe, Sparkles, Film, AlertCircle, Calendar, BarChart, FileText, Plus, Minus, Info } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePostContext } from "@/context/PostContext";
 import { useAuth } from "@/context/AuthContext";
