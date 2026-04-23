@@ -15,7 +15,7 @@ function getCleanDatabaseUrl(): string {
 
 loadEnv();
 
-import { neonConfig } from '@neondatabase/serverless';
+import { neonConfig, Pool } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import ws from 'ws';
 
@@ -26,7 +26,9 @@ export class PrismaService extends PrismaClient
     implements OnModuleInit, OnModuleDestroy {
 
     constructor() {
+        const adapter = new PrismaNeon({ connectionString: getCleanDatabaseUrl() });
         super({
+            adapter,
             log: ['error', 'warn'],
         });
     }

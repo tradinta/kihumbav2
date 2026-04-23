@@ -35,7 +35,8 @@ neonConfig.webSocketConstructor = ws;
 
 const connectionString = getCleanEnv('DATABASE_URL');
 
-const prisma = new PrismaClient();
+const adapter = new PrismaNeon({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 async function sendZeptoEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
     const region = getCleanEnv('ZEPTOMAIL_REGION') || 'com'; // e.g., 'com', 'eu', 'in'
