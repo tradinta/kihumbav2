@@ -6,7 +6,7 @@ import {
   Check, Heart, MessageCircle, Download,
   Eye, User, Flame, Ghost, ShieldCheck, 
   File, FileText, FileArchive, FileCode, Music, FileVideo, FileImage, ImagePlay,
-  SmilePlus, Loader2, Calendar, ShoppingCart, Home, ArrowRight, ExternalLink, Users, BarChart2
+  SmilePlus, Loader2, ShoppingCart, Home, ArrowRight, ExternalLink, Users, BarChart2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UserIdentity from '@/components/shared/UserIdentity';
@@ -444,14 +444,14 @@ function SmartLinkRenderer({ content }: { content: string }) {
         // Internal Link Dispatcher - Support both short and long paths
         const isPost = path.startsWith('/p/') || path.startsWith('/post/');
         const isProfile = path.startsWith('/u/') || path.startsWith('/profile/');
-        const isEvent = path.startsWith('/e/') || path.startsWith('/event/');
+
         const isMarket = path.startsWith('/m/') || path.startsWith('/market/');
         const isKao = path.startsWith('/k/') || path.startsWith('/kao/');
         const isRoommate = path.startsWith('/r/') || path.startsWith('/roommate/');
 
         if (isProfile) return <InternalCard icon={<User size={12} />} title="Profile" subtitle={path.split('/').pop() || 'User'} />;
         if (isPost) return <InternalCard icon={<FileText size={12} />} title="Shared Post" subtitle="View details" />;
-        if (isEvent) return <InternalCard icon={<Calendar size={12} />} title="Event" subtitle="View details" />;
+
         if (isMarket) return <InternalCard icon={<ShoppingCart size={12} />} title="Marketplace" subtitle="Trade listing" />;
         if (isKao) return <InternalCard icon={<Home size={12} />} title="Kao Listing" subtitle="Accommodation" />;
         if (isRoommate) return <InternalCard icon={<Users size={12} />} title="Roommate Req" subtitle="Co-living" />;
