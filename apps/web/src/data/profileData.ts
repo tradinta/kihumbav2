@@ -33,7 +33,6 @@ export interface ProfileUser {
     trust: number;
     activity: number;
     community: number;
-    marketplace: number;
   };
 }
 
@@ -138,7 +137,6 @@ export const mockUser: ProfileUser = {
     trust: 95,
     activity: 88,
     community: 91,
-    marketplace: 94,
   },
 };
 

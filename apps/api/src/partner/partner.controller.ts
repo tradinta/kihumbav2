@@ -65,14 +65,6 @@ export class PartnerController {
     return this.partnerService.submitDraft(userId, briefId, data);
   }
 
-  /**
-   * Marketplace: Fetch available campaigns
-   */
-  @Get('marketplace')
-  async getMarketplace(@Req() req: any) {
-    const userId = req.user.id;
-    return this.partnerService.getMarketplaceCampaigns(userId);
-  }
 
   /**
    * Join: Creator applies for a campaign

@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, ShoppingBag, Store, Award } from 'lucide-react';
 
-export type ProfileTab = 'posts' | 'marketplace' | 'kao' | 'badges';
+export type ProfileTab = 'posts' | 'badges';
 
 interface Props {
   active: ProfileTab;
@@ -13,8 +13,6 @@ interface Props {
 
 const TABS: { id: ProfileTab; label: string; icon: React.ElementType }[] = [
   { id: 'posts', label: 'Posts', icon: FileText },
-  { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag },
-  { id: 'kao', label: 'Kao', icon: Store },
   { id: 'badges', label: 'Badges', icon: Award },
 ];
 
