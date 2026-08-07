@@ -6,7 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/src/main",
-    "lint": "eslint src || true",
+    "lint": "eslint src",
     "db:generate": "prisma generate",
     "db:push": "prisma db push"
   },
