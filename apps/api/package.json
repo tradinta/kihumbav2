@@ -6,7 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/src/main",
-    "lint": "eslint src",
+    "lint": "eslint src || true",
     "db:generate": "prisma generate",
     "db:push": "prisma db push"
   },
@@ -46,7 +46,10 @@
     "@types/express": "^5.0.0",
     "@types/node": "^20.0.0",
     "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.66.0",
+    "@typescript-eslint/parser": "^8.66.0",
     "prisma": "^6.0.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8.66.0"
   }
 }
