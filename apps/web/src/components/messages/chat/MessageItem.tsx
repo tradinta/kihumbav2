@@ -445,15 +445,11 @@ function SmartLinkRenderer({ content }: { content: string }) {
         const isPost = path.startsWith('/p/') || path.startsWith('/post/');
         const isProfile = path.startsWith('/u/') || path.startsWith('/profile/');
 
-        const isMarket = path.startsWith('/m/') || path.startsWith('/market/');
-        const isKao = path.startsWith('/k/') || path.startsWith('/kao/');
         const isRoommate = path.startsWith('/r/') || path.startsWith('/roommate/');
 
         if (isProfile) return <InternalCard icon={<User size={12} />} title="Profile" subtitle={path.split('/').pop() || 'User'} />;
         if (isPost) return <InternalCard icon={<FileText size={12} />} title="Shared Post" subtitle="View details" />;
 
-        if (isMarket) return <InternalCard icon={<ShoppingCart size={12} />} title="Marketplace" subtitle="Trade listing" />;
-        if (isKao) return <InternalCard icon={<Home size={12} />} title="Kao Listing" subtitle="Accommodation" />;
         if (isRoommate) return <InternalCard icon={<Users size={12} />} title="Roommate Req" subtitle="Co-living" />;
       }
 

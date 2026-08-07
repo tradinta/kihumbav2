@@ -6,7 +6,6 @@ import { usePostContext } from "@/context/PostContext";
 
 const navItems = [
   { id: "home", icon: Building2, label: "Home", href: "/" },
-  { id: "kao", icon: Store, label: "Kao", href: "/kao" },
   { id: "growth", icon: Crown, label: "Growth", href: "/plus" },
   { id: "more", icon: Menu, label: "More", href: "/settings" },
 ];

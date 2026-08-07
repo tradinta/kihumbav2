@@ -82,16 +82,6 @@ export default function NotFound() {
           </Link>
 
           <div className="grid grid-cols-2 gap-2">
-            <Link href="/kao">
-              <button className="w-full py-2.5 card-surface rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted-custom hover:text-primary-gold hover:border-primary-gold/30 transition-all flex items-center justify-center gap-1.5">
-                <Search size={12} /> Explore Kao
-              </button>
-            </Link>
-            <Link href="/marketplace">
-              <button className="w-full py-2.5 card-surface rounded-lg text-[9px] font-bold uppercase tracking-widest text-muted-custom hover:text-primary-gold hover:border-primary-gold/30 transition-all flex items-center justify-center gap-1.5">
-                <Search size={12} /> Marketplace
-              </button>
-            </Link>
           </div>
         </motion.div>
 

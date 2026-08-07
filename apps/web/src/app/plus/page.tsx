@@ -377,7 +377,6 @@ export default function PlusPage() {
             { icon: <Music size={18} />, title: 'IDENTITY AUDIO', desc: 'Set a profile theme song that plays for visitors.' },
             { icon: <RotateCcw size={18} />, title: 'UNDO POST', desc: '5-second grace period to unsend any post or status.' },
             { icon: <History size={18} />, title: 'PRICE PULSE', desc: 'Full history of property price changes on Kao.' },
-            { icon: <TrendingUp size={18} />, title: 'ALGO BOOST', desc: 'Priority indexing for marketplace listings.' },
           ].map((item, i) => (
             <div key={i} className="p-8 rounded-xl bg-zinc-900/30 border border-white/5 flex flex-col items-center text-center group hover:bg-zinc-900/50 transition-all">
               <div className="size-12 rounded-2xl bg-black border border-white/5 flex items-center justify-center text-primary-gold mb-6 shadow-xl group-hover:scale-110 transition-transform">

@@ -9,8 +9,6 @@ import ProfileHero from '@/components/profile/ProfileHero';
 import ProfileStats from '@/components/profile/ProfileStats';
 import ProfileTabs, { type ProfileTab } from '@/components/profile/ProfileTabs';
 import ProfilePosts from '@/components/profile/ProfilePosts';
-import ProfileMarketplace from '@/components/profile/ProfileMarketplace';
-import ProfileKao from '@/components/profile/ProfileKao';
 import ProfileBadges from '@/components/profile/ProfileBadges';
 import ProfileRightSidebar from '@/components/profile/ProfileRightSidebar';
 import ProfileSkeleton from '@/components/profile/ProfileSkeleton';
@@ -235,10 +233,6 @@ export default function ProfileClient({ username }: Props) {
 
         {/* Tab Content */}
         {activeTab === 'posts' && <ProfilePosts posts={posts} isSelf={isSelf} />}
-        {activeTab === 'marketplace' && (
-          <ProfileMarketplace user={user} />
-        )}
-        {activeTab === 'kao' && <ProfileKao user={user} />}
         {activeTab === 'badges' && <ProfileBadges user={user} />}
       </main>
 

@@ -9,8 +9,8 @@ import LeftSidebar from '@/components/LeftSidebar';
 import { Search, Loader2, Hash, User, LayoutGrid, Video, Clock, TrendingUp, Users } from 'lucide-react';
 
 const client = algoliasearch(
-  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || '',
-  process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || ''
+  process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || 'dummy_id',
+  process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY || 'dummy_key'
 );
 
 if (!process.env.NEXT_PUBLIC_ALGOLIA_APP_ID) {

@@ -38,20 +38,6 @@ export const adFormats = [
     description: "Pinned sponsored comments under high-traffic posts.",
     icon: MessageSquareQuote,
     features: ["Contextual", "Native feel", "Low cost per click"]
-  },
-  {
-    id: "kao",
-    title: "Kao Featured",
-    description: "Boost your real estate listings to the top of Kao searches.",
-    icon: Home,
-    features: ["Targeted to renters", "Urgency badges", "Premium placement"]
-  },
-  {
-    id: "marketplace",
-    title: "Marketplace Boost",
-    description: "Push your items to the top of the barter/sell feed.",
-    icon: ShoppingBag,
-    features: ["Verified trust badge", "Category specific", "Increase sales 3x"]
   }
 ];
 

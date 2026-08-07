@@ -6,8 +6,6 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
-import { MarketplaceModule } from './marketplace/marketplace.module';
-import { KaoModule } from './kao/kao.module';
 import { VideoModule } from './video/video.module';
 import { TribeModule } from './tribe/tribe.module';
 import { ChatModule } from './chat/chat.module';
@@ -33,8 +31,6 @@ import { FireModule } from './fire/fire.module';
         UserModule,
         PostModule,
         CommentModule,
-        MarketplaceModule,
-        KaoModule,
         VideoModule,
         TribeModule,
         ChatModule,

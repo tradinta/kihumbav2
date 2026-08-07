@@ -8,7 +8,6 @@ import {
   Globe, Wallet, ShieldCheck, Star
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import MarketplaceModal from './MarketplaceModal';
 import SubmitDraftModal from './SubmitDraftModal';
 
 interface CampaignBrief {
@@ -191,7 +190,6 @@ export default function CampaignsTab({ campaigns, partnerProfile, videos, refres
       </div>
 
       <AnimatePresence>
-          {showMarketplace && <MarketplaceModal onClose={() => setShowMarketplace(false)} onRefresh={refresh} />}
           {activeBriefForDraft && (
               <SubmitDraftModal 
                 briefId={activeBriefForDraft}

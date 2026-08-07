@@ -112,7 +112,6 @@ function getBadgeDesc(name: string): string {
   if (name === 'Welcome') return 'Welcome to the Kihumba network.';
   if (name.includes('Pioneer')) return 'One of the first to join the revolution.';
   if (name === 'Early Adopter') return 'Joined during the platform alpha phase.';
-  if (name.includes('Kao')) return 'Recognized for contributions to the marketplace.';
   if (name.includes('Influencer')) return 'A respected voice in the digital ecosystem.';
   if (name.includes('Warrior') || name.includes('Regular')) return 'Active daily contributor and resident.';
   return 'A token of merit for exceptional activity.';

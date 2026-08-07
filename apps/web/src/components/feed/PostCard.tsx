@@ -43,7 +43,6 @@ export interface PostData {
   tribe?: { id: string; name: string; slug: string };
   originalPost?: PostData;
   marketListing?: any; 
-  kaoListing?: any;
   _count: { comments: number; interactions: number; reshares: number };
   userInteraction?: {
     hasUpvoted: boolean;
@@ -488,117 +487,6 @@ export default function PostCard({ post, index = 0, isEmbedded = false, layout =
           </div>
         )}
 
-        {/* Embedded Marketplace Item */}
-        {displayPost.marketListing && (
-          <div className="px-4 pb-4 relative z-20">
-            <div 
-              className="relative rounded-2xl border border-primary-gold/20 bg-white/[0.03] backdrop-blur-md overflow-hidden group/market p-4 shadow-2xl transition-all hover:border-primary-gold/40"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex gap-4">
-                <div className="relative size-20 rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-lg">
-                   <img 
-                     src={displayPost.marketListing.images?.[0] || "https://images.unsplash.com/photo-1592750475338-74b7b21085ab"} 
-                     alt={displayPost.marketListing.title}
-                     className="w-full h-full object-cover group-hover/market:scale-110 transition-transform duration-700"
-                   />
-                </div>
-                
-                <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <Badge gold className="text-[7px]">Marketplace Item</Badge>
-                      <span className="text-xs font-black text-primary-gold gold-glow">
-                        {displayPost.marketListing.price ? `KES ${displayPost.marketListing.price.toLocaleString()}` : 'Price TBD'}
-                      </span>
-                    </div>
-                    <h4 className="text-[13px] font-black uppercase tracking-wider text-main truncate group-hover/market:text-primary-gold transition-colors">
-                      {displayPost.marketListing.title}
-                    </h4>
-                    <div className="flex items-center gap-2 mt-1.5 opacity-80">
-                      <div className="size-4 rounded-full bg-zinc-800 border border-white/10 overflow-hidden">
-                         <img src={displayPost.marketListing.seller?.avatar || "/default-avatar.png"} alt="" className="w-full h-full object-cover" />
-                      </div>
-                      <span className="text-[9px] font-bold tracking-widest uppercase text-muted-custom">Listed by @{displayPost.marketListing.seller?.username}</span>
-                    </div>
-                  </div>
-
-                  <Link 
-                    href={`/marketplace/${displayPost.marketListing.id}`}
-                    className="mt-3 h-8 px-4 rounded-lg bg-primary-gold text-black text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-95 w-fit shadow-lg shadow-primary-gold/10"
-                  >
-                    View Item <ExternalLink size={10} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Embedded KAO Listing */}
-        {(displayPost.kaoListing || (post.contentType === 'QUOTE' && (post as any).kaoListing)) && (
-          <div className="px-4 pb-4 relative z-20">
-            {(() => {
-              const item = displayPost.kaoListing || (post as any).kaoListing;
-              if (!item) return null;
-              
-              return (
-                <div 
-                  className="relative rounded-2xl border border-primary-gold/20 bg-white/[0.03] backdrop-blur-md overflow-hidden group/kao p-4 shadow-2xl transition-all hover:border-primary-gold/40"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex gap-4">
-                    <div className="relative size-20 rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-lg bg-zinc-900">
-                       {(() => {
-                         const imgSrc = item.images?.[0] || item.image;
-                         if (imgSrc && imgSrc.length > 0) {
-                           return (
-                             <img 
-                               src={imgSrc} 
-                               alt={item.title}
-                               className="w-full h-full object-cover group-hover/kao:scale-110 transition-transform duration-700"
-                             />
-                           );
-                         }
-                         return (
-                           <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700 gap-1 bg-zinc-900">
-                              <Camera size={20} strokeWidth={1} />
-                              <span className="text-[6px] font-black uppercase tracking-wider">No Photo</span>
-                           </div>
-                         );
-                       })()}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <Badge gold className="text-[7px]">Real Estate (KAO)</Badge>
-                          <span className="text-xs font-black text-primary-gold gold-glow">
-                            {item.price ? `KES ${item.price.toLocaleString()}` : 'Price TBD'}
-                          </span>
-                        </div>
-                        <h4 className="text-[13px] font-black uppercase tracking-wider text-main truncate group-hover/kao:text-primary-gold transition-colors">
-                          {item.title}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1.5 opacity-80">
-                          <MapPin size={10} className="text-primary-gold" />
-                          <span className="text-[9px] font-bold tracking-widest uppercase text-muted-custom">{item.area}, {item.county}</span>
-                        </div>
-                      </div>
-
-                      <Link 
-                        href={`/kao/${item.id}`}
-                        className="mt-3 h-8 px-4 rounded-lg bg-primary-gold text-black text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-95 w-fit shadow-lg shadow-primary-gold/10"
-                      >
-                        View Property <ExternalLink size={10} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-        )}
         
         {/* Video Content */}
         {(displayPost.video || (displayPost.contentType === 'VIDEO' && mediaArray?.[0]?.type === 'video')) && (
